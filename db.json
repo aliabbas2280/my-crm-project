@@ -1,0 +1,405 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "admin@crm.com",
+      "password": "password",
+      "name": "Admin User",
+      "role": "admin",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "name": "John Sales",
+      "email": "john@crm.com",
+      "password": "password",
+      "role": "sales",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "1767773601191",
+      "name": "Ali Abbas",
+      "email": "aliabbas56715180@gmail.com",
+      "password": "656565",
+      "role": "user",
+      "createdAt": "2026-01-07T08:13:21.191Z"
+    },
+    {
+      "id": "1767854221611",
+      "name": "AliAbbas",
+      "email": "ali@gmail.com",
+      "password": "676767",
+      "role": "user",
+      "createdAt": "2026-01-08T06:37:01.611Z"
+    }
+  ],
+  "clients": [
+    {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "company": "ABC Corp",
+      "status": "Active",
+      "id": "1"
+    },
+    {
+      "id": "2",
+      "name": "Jane Smith",
+      "email": "jane@techcorp.com",
+      "phone": "+1987654321",
+      "company": "Tech Corp",
+      "status": "Active",
+      "createdAt": "2024-01-02T00:00:00.000Z"
+    },
+    {
+      "name": "AliAbbas",
+      "email": "aliabbas56715180@gmail.com",
+      "phone": "03235992280",
+      "company": "Greelogix",
+      "status": "Active",
+      "id": "1767788282252"
+    },
+    {
+      "name": "Atiq",
+      "email": "Atiq@gmail.com",
+      "phone": "03187345332",
+      "company": "KFC",
+      "status": "Inactive",
+      "id": "1767868285378"
+    },
+    {
+      "id": "1768197566673",
+      "name": "Hassan",
+      "email": "Hassan@gmial.com",
+      "phone": "03235992280",
+      "company": "Purelogix",
+      "status": "Active",
+      "createdAt": "2026-01-12T05:59:26.673Z"
+    }
+  ],
+  "deals": [
+    {
+      "id": "1",
+      "title": "Website Development",
+      "clientId": 1,
+      "clientName": "John Doe",
+      "userId": 1,
+      "userName": "Admin User",
+      "value": 50000,
+      "status": "Lost",
+      "expectedCloseDate": "2024-02-15",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "title": "Mobile App",
+      "clientId": 2,
+      "userId": 2,
+      "value": 75000,
+      "status": "Won",
+      "expectedCloseDate": "2024-03-01",
+      "clientName": "Jane Smith",
+      "userName": "John Sales",
+      "id": "2"
+    },
+    {
+      "title": "Amazone",
+      "clientId": "2",
+      "value": 25000,
+      "status": "Lead",
+      "expectedCloseDate": "2026-01-10",
+      "clientName": "Jane Smith",
+      "userName": "Current User",
+      "userId": 1,
+      "id": "1767773668282"
+    },
+    {
+      "id": "1767794401599",
+      "title": "Seo Optimization",
+      "clientId": "1767788282252",
+      "value": 2000,
+      "status": "Lost",
+      "expectedCloseDate": "2026-01-07",
+      "clientName": "AliAbbas",
+      "userName": "Current User",
+      "userId": 1,
+      "createdAt": "2026-01-07T14:00:01.599Z"
+    },
+    {
+      "title": "Ecommerce",
+      "clientId": "1767868285378",
+      "value": 1000,
+      "status": "Won",
+      "expectedCloseDate": "2026-01-31",
+      "clientName": "Atiq",
+      "userName": "Current User",
+      "userId": 1,
+      "id": "1767868343810"
+    },
+    {
+      "id": "1768197614399",
+      "title": "Crypto",
+      "clientId": "1768197566673",
+      "value": 2000,
+      "status": "Won",
+      "expectedCloseDate": "2026-01-15",
+      "clientName": "Hassan",
+      "userName": "Current User",
+      "userId": 1,
+      "createdAt": "2026-01-12T06:00:14.399Z"
+    }
+  ],
+  "activities": [
+    {
+      "id": "1",
+      "type": "client_created",
+      "message": "New client John Doe added",
+      "date": "2024-01-01",
+      "userId": 1
+    },
+    {
+      "id": "2",
+      "type": "deal_created",
+      "message": "Deal 'Website Development' created for John Doe",
+      "date": "2024-01-01",
+      "userId": 1
+    },
+    {
+      "id": "1767772598174",
+      "type": "deal_status_changed",
+      "message": "Deal 'Mobile App' status changed to Proposal",
+      "userId": 2,
+      "date": "2026-01-07"
+    },
+    {
+      "id": "1767772602926",
+      "type": "deal_status_changed",
+      "message": "Deal 'Website Development' status changed to Lead",
+      "userId": 1,
+      "date": "2026-01-07"
+    },
+    {
+      "id": "1767772605671",
+      "type": "deal_status_changed",
+      "message": "Deal 'Website Development' status changed to Won",
+      "userId": 1,
+      "date": "2026-01-07"
+    },
+    {
+      "id": "1767772616063",
+      "type": "deal_updated",
+      "message": "Deal 'Mobile App' updated",
+      "userId": 2,
+      "date": "2026-01-07"
+    },
+    {
+      "id": "1767782819511",
+      "type": "deal_created",
+      "message": "New deal 'Front End dev' created",
+      "userId": 1,
+      "date": "2026-01-07"
+    },
+    {
+      "id": "1767784721823",
+      "type": "deal_status_changed",
+      "message": "Deal 'Mobile App' status changed to Won",
+      "userId": 1,
+      "date": "2026-01-07"
+    },
+    {
+      "id": "1767794401632",
+      "type": "deal_created",
+      "message": "New deal 'Seo Optimization' created",
+      "userId": 1,
+      "date": "2026-01-07"
+    },
+    {
+      "id": "1767796570263",
+      "type": "deal_deleted",
+      "message": "Deal 'Front End dev' deleted",
+      "userId": 1,
+      "date": "2026-01-07"
+    },
+    {
+      "id": "1767796585639",
+      "type": "client_updated",
+      "message": "Client AliAbbas updated",
+      "userId": 1,
+      "date": "2026-01-07"
+    },
+    {
+      "id": "1767852863345",
+      "type": "deal_status_changed",
+      "message": "Deal 'Mobile App' status changed to Qualified",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767852889485",
+      "type": "deal_status_changed",
+      "message": "Deal 'Web Dev' status changed to Won",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767852971182",
+      "type": "deal_status_changed",
+      "message": "Deal 'Mobile App' status changed to Proposal",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767853072107",
+      "type": "client_updated",
+      "message": "Client AliAbbas updated",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767868285428",
+      "type": "client_created",
+      "message": "New client Atiq added",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767868343833",
+      "type": "deal_created",
+      "message": "New deal 'Ecommerce' created",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767869206841",
+      "type": "deal_status_changed",
+      "message": "Deal 'Mobile App' status changed to Won",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767869228680",
+      "type": "deal_status_changed",
+      "message": "Deal 'Seo Optimization' status changed to Lost",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767869284876",
+      "type": "deal_status_changed",
+      "message": "Deal 'Website Development' status changed to Proposal",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767869517848",
+      "type": "deal_status_changed",
+      "message": "Deal 'Ecommerce' status changed to Qualified",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767869521270",
+      "type": "deal_status_changed",
+      "message": "Deal 'Mobile App' status changed to Lead",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767871535651",
+      "type": "deal_updated",
+      "message": "Deal 'Amazone' updated",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767877980899",
+      "type": "deal_status_changed",
+      "message": "Deal 'Website Development' status changed to Qualified",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767877998420",
+      "type": "deal_status_changed",
+      "message": "Deal 'Mobile App' status changed to Won",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1767881121756",
+      "type": "client_updated",
+      "message": "Client John Doe updated",
+      "userId": 1,
+      "date": "2026-01-08"
+    },
+    {
+      "id": "1768148072742",
+      "type": "client_updated",
+      "message": "Client John Doe updated",
+      "userId": 1,
+      "date": "2026-01-11"
+    },
+    {
+      "id": "1768197566707",
+      "type": "client_created",
+      "message": "New client Hassan added",
+      "userId": 1,
+      "date": "2026-01-12"
+    },
+    {
+      "id": "1768197614425",
+      "type": "deal_created",
+      "message": "New deal 'Crypto' created",
+      "userId": 1,
+      "date": "2026-01-12"
+    },
+    {
+      "id": "1768197625761",
+      "type": "deal_status_changed",
+      "message": "Deal 'Crypto' status changed to Won",
+      "userId": 1,
+      "date": "2026-01-12"
+    },
+    {
+      "id": "1768207073229",
+      "type": "deal_status_changed",
+      "message": "Deal 'Website Development' status changed to Lost",
+      "userId": 1,
+      "date": "2026-01-12"
+    },
+    {
+      "id": "1768207141513",
+      "type": "deal_status_changed",
+      "message": "Deal 'Seo Optimization' status changed to Lead",
+      "userId": 1,
+      "date": "2026-01-12"
+    },
+    {
+      "id": 1768208152344,
+      "type": "deal_updated",
+      "message": "Deal 'Ecommerce' updated",
+      "userId": 1,
+      "date": "2026-01-12"
+    },
+    {
+      "id": 1768210225921,
+      "type": "deal_status_changed",
+      "message": "Deal 'Seo Optimization' status changed to Lost",
+      "userId": 1,
+      "date": "2026-01-12"
+    },
+    {
+      "id": 1768210230610,
+      "type": "deal_status_changed",
+      "message": "Deal 'Amazone' status changed to Lead",
+      "userId": 1,
+      "date": "2026-01-12"
+    },
+    {
+      "id": 1768210355088,
+      "type": "client_updated",
+      "message": "Client Atiq updated",
+      "userId": 1,
+      "date": "2026-01-12"
+    }
+  ]
+}

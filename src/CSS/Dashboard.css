@@ -1,0 +1,485 @@
+
+.dashboard-container {
+  margin-left: 280px;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.dashboard-content {
+  padding: 24px;
+}
+
+.main-header {
+  background: white;
+  padding: 20px 24px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.header-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* RESPONSIVE: Search bar styling */
+.header-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #6b7280;
+  z-index: 1;
+}
+
+.header-search input {
+  padding: 8px 12px 8px 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  width: 300px;
+  font-size: 14px;
+}
+
+.header-search input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modern-kpi-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.kpi-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.kpi-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.kpi-icon-wrapper.green { background: #10b981; }
+.kpi-icon-wrapper.blue { background: #3b82f6; }
+.kpi-icon-wrapper.pink { background: #ec4899; }
+.kpi-icon-wrapper.purple { background: #8b5cf6; }
+
+.kpi-trend {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.kpi-trend.positive {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.kpi-trend.negative {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.kpi-value {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.kpi-label {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.kpi-subtitle {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.modern-table-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.modern-table th {
+  background: #f9fafb;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.product-info {
+  display: flex;
+  gap: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state-icon svg {
+  width: 48px;
+  height: 48px;
+  color: #9ca3af;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f4f6;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Hamburger menu button - only visible on mobile/tablet */
+.hamburger-menu {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1001;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1.25rem;
+  color: #374151;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+.hamburger-menu:hover {
+  background: #f9fafb;
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+}
+
+/* Show sidebar when open on mobile */
+.modern-sidebar.mobile-open {
+  transform: translateX(0);
+}
+
+/* MOBILE RESPONSIVE: 320px screens - smallest mobile devices */
+@media (max-width: 320px) {
+  /* Hide sidebar on mobile, remove margin */
+  .dashboard-container {
+    margin-left: 0;
+  }
+  
+  /* Reduce content padding for small screens */
+  .dashboard-content {
+    padding: 0.5rem;
+  }
+  
+  /* Stack header elements vertically */
+  .main-header {
+    flex-direction: column;
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+  
+  /* Reduce header text sizes */
+  .header-title {
+    font-size: 1.125rem;
+  }
+  
+  .header-subtitle {
+    font-size: 0.75rem;
+  }
+  
+  /* Make search bar full width */
+  .header-search {
+    width: 100%;
+  }
+  
+  /* Reduce KPI card padding and text sizes */
+  .modern-kpi-card {
+    padding: 0.5rem;
+  }
+  
+  .kpi-value {
+    font-size: 1.25rem;
+  }
+  
+  .kpi-label {
+    font-size: 0.75rem;
+  }
+  
+  /* Reduce icon sizes */
+  .kpi-icon-wrapper {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+  
+  /* Reduce table card padding */
+  .modern-table-card {
+    padding: 0.5rem;
+  }
+  
+  /* Stack table header elements */
+  .table-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Reduce table text size */
+  .modern-table {
+    font-size: 0.75rem;
+  }
+  
+  .modern-table th {
+    font-size: 0.625rem;
+    padding: 0.5rem 0.25rem;
+  }
+  
+  .modern-table td {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  /* Reduce edit/delete button sizes on mobile */
+  .btn-sm-mobile {
+    padding: 0.15rem 0.3rem;
+    font-size: 0.65rem;
+    border-radius: 0.2rem;
+  }
+  
+  .btn-sm-mobile .me-1, .btn-sm-mobile .me-2 {
+    margin-right: 0.15rem !important;
+    font-size: 0.6rem;
+  }
+}
+
+/* TABLET RESPONSIVE: 768px screens - tablet devices */
+@media (max-width: 768px) {
+  /* Hide sidebar on tablet, remove margin */
+  .dashboard-container {
+    margin-left: 0;
+  }
+  
+  /* Adjust content padding for tablets */
+  .dashboard-content {
+    padding: 1rem;
+  }
+  
+  /* Stack header elements on tablet */
+  .main-header {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+  
+  /* Adjust header text sizes for tablet */
+  .header-title {
+    font-size: 1.5rem;
+  }
+  
+  .header-subtitle {
+    font-size: 0.875rem;
+  }
+  
+  /* Make search bar full width on tablet */
+  .header-search {
+    width: 100%;
+  }
+  
+  /* Adjust KPI card sizes for tablet */
+  .modern-kpi-card {
+    padding: 0.75rem;
+  }
+  
+  .kpi-value {
+    font-size: 1.5rem;
+  }
+  
+  .kpi-label {
+    font-size: 0.875rem;
+  }
+  
+  /* Adjust icon sizes for tablet */
+  .kpi-icon-wrapper {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.25rem;
+  }
+  
+  /* Adjust table card padding for tablet */
+  .modern-table-card {
+    padding: 0.75rem;
+  }
+  
+  /* Stack table header on tablet */
+  .table-header {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  /* Adjust table text size for tablet */
+  .modern-table {
+    font-size: 0.875rem;
+  }
+  
+  .modern-table th {
+    font-size: 0.75rem;
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .modern-table td {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  /* Reduce edit/delete button sizes on tablet */
+  .btn-sm-mobile {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+  }
+  
+  .btn-sm-mobile .me-1, .btn-sm-mobile .me-2 {
+    margin-right: 0.2rem !important;
+    font-size: 0.7rem;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    margin-left: 0;
+    padding: 0;
+  }
+  
+  .dashboard-content {
+    padding: 16px;
+  }
+  
+  .main-header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .header-search input {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .header-title {
+    font-size: 24px;
+  }
+  
+  .kpi-value {
+    font-size: 24px;
+  }
+  
+  .modern-kpi-card {
+    padding: 16px;
+  }
+  
+  .modern-table-card {
+    padding: 16px;
+  }
+  
+  .table-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 320px) {
+  .dashboard-content {
+    padding: 12px;
+  }
+  
+  .main-header {
+    padding: 12px;
+  }
+  
+  .header-search input {
+    width: 100%;
+    font-size: 16px; 
+  }
+  
+  .header-title {
+    font-size: 20px;
+  }
+  
+  .header-subtitle {
+    font-size: 12px;
+  }
+  
+  .kpi-value {
+    font-size: 20px;
+  }
+  
+  .kpi-label {
+    font-size: 14px;
+  }
+  
+  .modern-kpi-card {
+    padding: 12px;
+  }
+  
+  .modern-table-card {
+    padding: 12px;
+  }
+  
+  .kpi-icon-wrapper {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .empty-state {
+    padding: 24px;
+  }
+}

@@ -1,0 +1,132 @@
+/* ================================
+   SETTINGS PAGE LAYOUT
+   ================================ */
+
+/* 
+  Sidebar-aware layout
+  Sidebar width = 280px
+  Automatically removed on mobile
+*/
+.settings-container {
+  margin-left: 280px; /* matches sidebar */
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  transition: margin 0.3s ease;
+}
+
+/* ================================
+   CARD STYLES
+   ================================ */
+
+.settings-card {
+  border: none;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* ================================
+   HEADER
+   ================================ */
+
+.settings-header {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #ffffff;
+  border-radius: 16px 16px 0 0;
+  padding: 1.5rem 2rem;
+  border-bottom: none;
+}
+
+.settings-header h3 {
+  margin: 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ================================
+   FORM INPUTS
+   ================================ */
+
+/* 
+  We now rely on Bootstrap validation
+  so no custom .settings-input class
+*/
+.form-control {
+  border-radius: 8px;
+  padding: 0.7rem 0.75rem;
+  font-size: 0.95rem;
+}
+
+.form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Bootstrap invalid override (cleaner look) */
+.form-control.is-invalid {
+  border-color: #dc3545;
+  box-shadow: none;
+}
+
+/* Error text */
+.invalid-feedback {
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* ================================
+   SAVE BUTTON
+   ================================ */
+
+.settings-save-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1.8rem;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.settings-save-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(102, 126, 234, 0.35);
+}
+
+.settings-save-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ================================
+   SECTIONS
+   ================================ */
+
+.settings-card hr {
+  margin: 2rem 0;
+  opacity: 0.1;
+}
+
+/* ================================
+   RESPONSIVE FIX
+   ================================ */
+
+@media (max-width: 992px) {
+  /* Sidebar usually collapses here */
+  .settings-container {
+    margin-left: 0;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .settings-container {
+    padding: 1rem;
+  }
+
+  .settings-header {
+    padding: 1.25rem;
+  }
+}
