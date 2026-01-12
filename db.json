@@ -64,7 +64,7 @@
       "email": "Atiq@gmail.com",
       "phone": "03187345332",
       "company": "KFC",
-      "status": "Inactive",
+      "status": "Active",
       "id": "1767868285378"
     },
     {
@@ -86,7 +86,7 @@
       "userId": 1,
       "userName": "Admin User",
       "value": 50000,
-      "status": "Lost",
+      "status": "Won",
       "expectedCloseDate": "2024-02-15",
       "createdAt": "2024-01-01T00:00:00.000Z"
     },
@@ -109,7 +109,6 @@
       "expectedCloseDate": "2026-01-10",
       "clientName": "Jane Smith",
       "userName": "Current User",
-      "userId": 1,
       "id": "1767773668282"
     },
     {
@@ -117,7 +116,7 @@
       "title": "Seo Optimization",
       "clientId": "1767788282252",
       "value": 2000,
-      "status": "Lost",
+      "status": "Won",
       "expectedCloseDate": "2026-01-07",
       "clientName": "AliAbbas",
       "userName": "Current User",
@@ -374,31 +373,67 @@
       "date": "2026-01-12"
     },
     {
-      "id": 1768208152344,
+      "id": "1768208152344",
       "type": "deal_updated",
       "message": "Deal 'Ecommerce' updated",
       "userId": 1,
       "date": "2026-01-12"
     },
     {
-      "id": 1768210225921,
+      "id": "1768210225921",
       "type": "deal_status_changed",
       "message": "Deal 'Seo Optimization' status changed to Lost",
       "userId": 1,
       "date": "2026-01-12"
     },
     {
-      "id": 1768210230610,
+      "id": "1768210230610",
       "type": "deal_status_changed",
       "message": "Deal 'Amazone' status changed to Lead",
       "userId": 1,
       "date": "2026-01-12"
     },
     {
-      "id": 1768210355088,
+      "id": "1768210355088",
       "type": "client_updated",
       "message": "Client Atiq updated",
       "userId": 1,
+      "date": "2026-01-12"
+    },
+    {
+      "id": "1768222225791",
+      "type": "deal_status_changed",
+      "message": "Deal 'Website Development' status changed to Qualified",
+      "date": "2026-01-12"
+    },
+    {
+      "id": "1768222232447",
+      "type": "deal_status_changed",
+      "message": "Deal 'Website Development' status changed to Lead",
+      "date": "2026-01-12"
+    },
+    {
+      "id": "1768222238138",
+      "type": "deal_status_changed",
+      "message": "Deal 'Website Development' status changed to Won",
+      "date": "2026-01-12"
+    },
+    {
+      "id": "1768223613435",
+      "type": "client_updated",
+      "message": "Client Atiq updated",
+      "date": "2026-01-12"
+    },
+    {
+      "id": "1768224243283",
+      "type": "deal_status_changed",
+      "message": "Deal 'Seo Optimization' status changed to Won",
+      "date": "2026-01-12"
+    },
+    {
+      "id": "1768224385455",
+      "type": "deal_updated",
+      "message": "Deal 'Amazone' updated",
       "date": "2026-01-12"
     }
   ]

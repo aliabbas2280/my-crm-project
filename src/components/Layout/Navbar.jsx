@@ -1,7 +1,6 @@
-import { Navbar, Nav, Container, Dropdown } from 'react-bootstrap';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { MdDashboard, MdPeople, MdHandshake, MdPerson, MdLogout, MdSettings, MdNotifications } from 'react-icons/md';
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { MdDashboard, MdPeople, MdHandshake, MdPerson, MdLogout, MdSettings } from 'react-icons/md';
 import { ROUTES } from '../../constants/index';
 import './Navbar.css';
 
@@ -14,7 +13,7 @@ const navLinks = [
 const AppNavbar = ({ sidebarOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState({ name: 'User', role: 'Sales' });
 
   useEffect(() => {
     const user = localStorage.getItem('currentUser');
@@ -23,6 +22,7 @@ const AppNavbar = ({ sidebarOpen }) => {
         setCurrentUser(JSON.parse(user));
       } catch (error) {
         localStorage.removeItem('currentUser');
+        setCurrentUser({ name: 'User', role: 'Sales' });
       }
     }
   }, []);
@@ -41,28 +41,27 @@ const AppNavbar = ({ sidebarOpen }) => {
           <div className="logo-icon">📊</div>
         </div>
       </div>
-      
+
       <nav className="sidebar-nav">
         {navLinks.map(({ path, label, icon: Icon }) => (
           <div
             key={path}
             onClick={() => navigate(path)}
             className={`nav-item ${isActive(path) ? 'active' : ''}`}
+            title={label}
           >
             <Icon className="nav-icon" />
             <span className="nav-label">{label}</span>
           </div>
         ))}
       </nav>
-      
+
       <div className="sidebar-footer">
         <div className="user-profile">
-          <div className="user-avatar">
-            <MdPerson />
-          </div>
+          <div className="user-avatar"><MdPerson /></div>
           <div className="user-details">
-            <div className="user-name">{currentUser?.name || 'User'}</div>
-            <div className="user-role">{currentUser?.role || 'Sales'}</div>
+            <div className="user-name">{currentUser?.name}</div>
+            <div className="user-role">{currentUser?.role}</div>
           </div>
         </div>
         <div className="sidebar-actions">

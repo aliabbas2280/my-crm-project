@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Container, Button, Form, Badge, Row, Col } from 'react-bootstrap';
 import { MdPeople, MdEdit, MdDelete } from 'react-icons/md';
 import { clientsAPI, activitiesAPI } from '../utils/api';
+import { useAuth } from '../hooks/useAuth';
 import PageHeader from '../components/Common/PageHeader';
 import SearchFilter from '../components/Common/SearchFilter';
 import DataTable from '../components/Common/DataTable';
@@ -10,8 +11,10 @@ import LoadingSpinner from '../components/Common/LoadingSpinner';
 import '../CSS/Dashboard.css';
 
 const ClientsPage = () => {
+  const { getCurrentUser } = useAuth();
+  const user = getCurrentUser();
+
   const [clients, setClients] = useState([]);
-  const [filteredClients, setFilteredClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
@@ -25,42 +28,31 @@ const ClientsPage = () => {
     status: 'Active'
   });
 
-  useEffect(() => {
-    fetchClients();
-  }, []);
-
-  useEffect(() => {
-    filterClients();
-  }, [clients, searchTerm, statusFilter]);
-
-  const fetchClients = async () => {
+  // Fetch clients from API with optional search/status filters
+  const fetchClients = async (search = '', status = 'All') => {
     try {
-      const response = await clientsAPI.getAll();
-      setClients(response.data);
-    } catch (error) {
-      console.error('Failed to fetch clients:', error);
+      setLoading(true);
+      const params = {};
+      if (search) params.q = search;
+      if (status !== 'All') params.status = status;
+
+      const response = await clientsAPI.getAll(params);
+      setClients(response || []);
+    } catch (err) {
+      alert('Failed to load clients data');
     } finally {
       setLoading(false);
     }
   };
 
-  const filterClients = () => {
-    let filtered = clients;
+  useEffect(() => {
+    fetchClients();
+  }, []);
 
-    if (searchTerm) {
-      filtered = filtered.filter(client =>
-        client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        client.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        client.email.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (statusFilter !== 'All') {
-      filtered = filtered.filter(client => client.status === statusFilter);
-    }
-
-    setFilteredClients(filtered);
-  };
+  // Update API whenever search or status changes
+  useEffect(() => {
+    fetchClients(searchTerm, statusFilter);
+  }, [searchTerm, statusFilter]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,49 +62,45 @@ const ClientsPage = () => {
         await activitiesAPI.create({
           type: 'client_updated',
           message: `Client ${formData.name} updated`,
-          userId: 1
+          userId: user?.id
         });
+        alert('Client updated successfully!');
       } else {
         await clientsAPI.create(formData);
         await activitiesAPI.create({
           type: 'client_created',
           message: `New client ${formData.name} added`,
-          userId: 1
+          userId: user?.id
         });
+        alert('Client created successfully!');
       }
-      
-      fetchClients();
+
+      fetchClients(searchTerm, statusFilter);
       handleCloseModal();
-    } catch (error) {
-      console.error('Failed to save client:', error);
+    } catch (err) {
+      alert('Failed to save client. Please try again.');
     }
   };
 
   const handleEdit = (client) => {
     setEditingClient(client);
-    setFormData({
-      name: client.name,
-      email: client.email,
-      phone: client.phone,
-      company: client.company,
-      status: client.status
-    });
+    setFormData({ ...client });
     setShowModal(true);
   };
 
   const handleDelete = async (client) => {
-    if (window.confirm(`Are you sure you want to delete ${client.name}?`)) {
-      try {
-        await clientsAPI.delete(client.id);
-        await activitiesAPI.create({
-          type: 'client_deleted',
-          message: `Client ${client.name} deleted`,
-          userId: 1
-        });
-        fetchClients();
-      } catch (error) {
-        console.error('Failed to delete client:', error);
-      }
+    if (!window.confirm(`Are you sure you want to delete ${client.name}?`)) return;
+    try {
+      await clientsAPI.delete(client.id);
+      await activitiesAPI.create({
+        type: 'client_deleted',
+        message: `Client ${client.name} deleted`,
+        userId: user?.id
+      });
+      fetchClients(searchTerm, statusFilter);
+      alert('Client deleted successfully!');
+    } catch (err) {
+      alert('Failed to delete client. Please try again.');
     }
   };
 
@@ -140,19 +128,10 @@ const ClientsPage = () => {
         </Badge>
       </td>
       <td>
-        <Button
-          variant="outline-primary"
-          size="sm"
-          className="me-2"
-          onClick={() => handleEdit(client)}
-        >
+        <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleEdit(client)}>
           <MdEdit className="me-1" />Edit
         </Button>
-        <Button
-          variant="outline-danger"
-          size="sm"
-          onClick={() => handleDelete(client)}
-        >
+        <Button variant="outline-danger" size="sm" onClick={() => handleDelete(client)}>
           <MdDelete className="me-1" />Delete
         </Button>
       </td>
@@ -165,7 +144,7 @@ const ClientsPage = () => {
     <div className="dashboard-container">
       <Container fluid className="dashboard-content">
         <PageHeader icon={MdPeople} title="Clients Management" />
-        
+
         <SearchFilter
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -180,7 +159,7 @@ const ClientsPage = () => {
         <DataTable
           icon={MdPeople}
           title="Clients List"
-          data={filteredClients}
+          data={clients}
           columns={['Name', 'Company', 'Email', 'Phone', 'Status', 'Actions']}
           emptyMessage="No clients found"
           emptyDescription="Start by adding your first client"
@@ -201,7 +180,7 @@ const ClientsPage = () => {
                 <Form.Control
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                 />
               </Form.Group>
@@ -212,7 +191,7 @@ const ClientsPage = () => {
                 <Form.Control
                   type="text"
                   value={formData.company}
-                  onChange={(e) => setFormData({...formData, company: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                   required
                 />
               </Form.Group>
@@ -225,7 +204,7 @@ const ClientsPage = () => {
                 <Form.Control
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
                 />
               </Form.Group>
@@ -236,7 +215,7 @@ const ClientsPage = () => {
                 <Form.Control
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 />
               </Form.Group>
             </Col>
@@ -247,7 +226,7 @@ const ClientsPage = () => {
                 <Form.Label>Status</Form.Label>
                 <Form.Select
                   value={formData.status}
-                  onChange={(e) => setFormData({...formData, status: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 >
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>

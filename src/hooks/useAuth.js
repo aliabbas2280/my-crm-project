@@ -7,16 +7,19 @@ export const useAuth = () => {
   const login = async (email, password) => {
     setLoading(true);
     try {
-      const response = await usersAPI.login(email, password);
-      const user = response.data;
-      
-      localStorage.setItem('currentUser', JSON.stringify({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-      }));
-      
+      // usersAPI.login already returns the matched user
+      const user = await usersAPI.login(email, password);
+
+      localStorage.setItem(
+        'currentUser',
+        JSON.stringify({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role
+        })
+      );
+
       return { success: true, user };
     } catch (error) {
       throw new Error(error.message || 'Login failed');
@@ -28,24 +31,25 @@ export const useAuth = () => {
   const signup = async (formData) => {
     setLoading(true);
     try {
-      
-      const response = await usersAPI.getAll();
-      const users = response.data || response; 
-      
+      // Fetch all users
+      const users = await usersAPI.getAll();
+
+      // Check for existing email
       const existingUser = users.find(u => u.email === formData.email);
       if (existingUser) {
         throw new Error('User with this email already exists');
       }
-      
+
+      // Create new user
       const newUser = {
         name: formData.name,
         email: formData.email,
         password: formData.password,
         role: 'user'
       };
-      
-      const createResponse = await usersAPI.create(newUser);
-      return { success: true, user: createResponse };
+
+      const createdUser = await usersAPI.create(newUser);
+      return { success: true, user: createdUser };
     } catch (error) {
       throw error;
     } finally {
@@ -59,7 +63,17 @@ export const useAuth = () => {
 
   const getCurrentUser = () => {
     const userData = localStorage.getItem('currentUser');
-    return userData ? JSON.parse(userData) : null;
+
+    if (!userData || userData === 'undefined') {
+      return null;
+    }
+
+    try {
+      return JSON.parse(userData);
+    } catch {
+      localStorage.removeItem('currentUser');
+      return null;
+    }
   };
 
   return { login, signup, logout, getCurrentUser, loading };

@@ -3,11 +3,11 @@ import { Row, Col, Card, Table } from 'react-bootstrap';
 const DataTable = ({ 
   icon: Icon, 
   title, 
-  data, 
-  columns, 
-  emptyMessage, 
-  emptyDescription,
-  renderRow 
+  data = [], 
+  columns = [], 
+  emptyMessage = "No data available", 
+  emptyDescription = "", 
+  renderRow = () => null
 }) => (
   <Row>
     <Col>
@@ -27,7 +27,7 @@ const DataTable = ({
             <Table responsive className="modern-table">
               <thead>
                 <tr>
-                  {columns.map(column => (
+                  {columns.map((column) => (
                     <th key={column}>{column}</th>
                   ))}
                 </tr>

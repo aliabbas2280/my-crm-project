@@ -4,15 +4,20 @@ const FormModal = ({
   show, 
   onHide, 
   title, 
-  onSubmit, 
+  onSubmit = (e) => e.preventDefault(), 
   submitText, 
   children 
 }) => (
-  <Modal show={show} onHide={onHide} size="lg">
+  <Modal show={show} onHide={onHide} size="lg" centered>
     <Modal.Header closeButton>
       <Modal.Title>{title}</Modal.Title>
     </Modal.Header>
-    <Form onSubmit={onSubmit}>
+    <Form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(e);
+      }}
+    >
       <Modal.Body>
         {children}
       </Modal.Body>
@@ -21,7 +26,7 @@ const FormModal = ({
           Cancel
         </Button>
         <Button type="submit" className="btn-primary-modern">
-          {submitText}
+          {submitText || 'Submit'}
         </Button>
       </Modal.Footer>
     </Form>

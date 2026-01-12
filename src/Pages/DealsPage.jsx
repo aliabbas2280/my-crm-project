@@ -7,12 +7,15 @@ import SearchFilter from '../components/Common/SearchFilter';
 import DataTable from '../components/Common/DataTable';
 import FormModal from '../components/Common/FormModal';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
+import { useAuth } from '../hooks/useAuth';
 import '../CSS/Dashboard.css';
 
 const DealsPage = () => {
+  const { getCurrentUser } = useAuth();
+  const user = getCurrentUser();
+
   const [deals, setDeals] = useState([]);
   const [clients, setClients] = useState([]);
-  const [filteredDeals, setFilteredDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingDeal, setEditingDeal] = useState(null);
@@ -28,45 +31,34 @@ const DealsPage = () => {
 
   const dealStatuses = ['Lead', 'Qualified', 'Proposal', 'Won', 'Lost'];
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    filterDeals();
-  }, [deals, searchTerm, statusFilter]);
-
-  const fetchData = async () => {
+  const fetchDeals = async (search = '', status = 'All') => {
     try {
+      setLoading(true);
+      const params = {};
+      if (search) params.q = search;
+      if (status !== 'All') params.status = status;
+
       const [dealsResponse, clientsResponse] = await Promise.all([
-        dealsAPI.getAll(),
+        dealsAPI.getAll(params),
         clientsAPI.getAll()
       ]);
-      setDeals(dealsResponse.data);
-      setClients(clientsResponse.data);
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
+
+      setDeals(dealsResponse || []);
+      setClients(clientsResponse || []);
+    } catch {
+      alert('Failed to load deals or clients');
     } finally {
       setLoading(false);
     }
   };
 
-  const filterDeals = () => {
-    let filtered = deals;
+  useEffect(() => {
+    fetchDeals();
+  }, []);
 
-    if (searchTerm) {
-      filtered = filtered.filter(deal =>
-        deal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        deal.clientName?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (statusFilter !== 'All') {
-      filtered = filtered.filter(deal => deal.status === statusFilter);
-    }
-
-    setFilteredDeals(filtered);
-  };
+  useEffect(() => {
+    fetchDeals(searchTerm, statusFilter);
+  }, [searchTerm, statusFilter]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,8 +67,8 @@ const DealsPage = () => {
       const dealData = {
         ...formData,
         clientName: selectedClient?.name || '',
-        userName: 'Current User',
-        userId: 1
+        userName: user?.name || 'Current User',
+        userId: user?.id
       };
 
       if (editingDeal) {
@@ -84,21 +76,23 @@ const DealsPage = () => {
         await activitiesAPI.create({
           type: 'deal_updated',
           message: `Deal '${formData.title}' updated`,
-          userId: 1
+          userId: user?.id
         });
+        alert('Deal updated successfully!');
       } else {
         await dealsAPI.create(dealData);
         await activitiesAPI.create({
           type: 'deal_created',
           message: `New deal '${formData.title}' created`,
-          userId: 1
+          userId: user?.id
         });
+        alert('Deal created successfully!');
       }
-      
-      fetchData();
+
+      fetchDeals(searchTerm, statusFilter);
       handleCloseModal();
-    } catch (error) {
-      console.error('Failed to save deal:', error);
+    } catch {
+      alert('Failed to save deal. Please try again.');
     }
   };
 
@@ -115,18 +109,18 @@ const DealsPage = () => {
   };
 
   const handleDelete = async (deal) => {
-    if (window.confirm(`Are you sure you want to delete deal '${deal.title}'?`)) {
-      try {
-        await dealsAPI.delete(deal.id);
-        await activitiesAPI.create({
-          type: 'deal_deleted',
-          message: `Deal '${deal.title}' deleted`,
-          userId: 1
-        });
-        fetchData();
-      } catch (error) {
-        console.error('Failed to delete deal:', error);
-      }
+    if (!window.confirm(`Are you sure you want to delete deal '${deal.title}'?`)) return;
+    try {
+      await dealsAPI.delete(deal.id);
+      await activitiesAPI.create({
+        type: 'deal_deleted',
+        message: `Deal '${deal.title}' deleted`,
+        userId: user?.id
+      });
+      fetchDeals(searchTerm, statusFilter);
+      alert('Deal deleted successfully!');
+    } catch {
+      alert('Failed to delete deal. Please try again.');
     }
   };
 
@@ -136,11 +130,12 @@ const DealsPage = () => {
       await activitiesAPI.create({
         type: 'deal_status_changed',
         message: `Deal '${deal.title}' status changed to ${newStatus}`,
-        userId: 1
+        userId: user?.id
       });
-      fetchData();
-    } catch (error) {
-      console.error('Failed to update deal status:', error);
+      fetchDeals(searchTerm, statusFilter);
+      alert('Deal status updated successfully!');
+    } catch {
+      alert('Failed to update deal status. Please try again.');
     }
   };
 
@@ -175,19 +170,10 @@ const DealsPage = () => {
       </td>
       <td>{deal.expectedCloseDate || 'Not set'}</td>
       <td>
-        <Button
-          variant="outline-primary"
-          size="sm"
-          className="me-2"
-          onClick={() => handleEdit(deal)}
-        >
+        <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleEdit(deal)}>
           <MdEdit className="me-1" />Edit
         </Button>
-        <Button
-          variant="outline-danger"
-          size="sm"
-          onClick={() => handleDelete(deal)}
-        >
+        <Button variant="outline-danger" size="sm" onClick={() => handleDelete(deal)}>
           <MdDelete className="me-1" />Delete
         </Button>
       </td>
@@ -200,7 +186,7 @@ const DealsPage = () => {
     <div className="dashboard-container">
       <Container fluid className="dashboard-content">
         <PageHeader icon={MdHandshake} title="Deals Management" />
-        
+
         <SearchFilter
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -215,7 +201,7 @@ const DealsPage = () => {
         <DataTable
           icon={MdHandshake}
           title="Deals Pipeline"
-          data={filteredDeals}
+          data={deals}
           columns={['Title', 'Client', 'Value', 'Status', 'Close Date', 'Actions']}
           emptyMessage="No deals found"
           emptyDescription="Start by creating your first deal"
@@ -250,9 +236,9 @@ const DealsPage = () => {
                   required
                 >
                   <option value="">Select Client</option>
-                  {clients.map(client => (
+                  {clients?.map(client => (
                     <option key={client.id} value={client.id}>{client.name}</option>
-                  ))}
+                  )) || []}
                 </Form.Select>
               </Form.Group>
             </Col>

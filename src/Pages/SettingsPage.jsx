@@ -41,7 +41,17 @@ const SettingsPage = () => {
     }
   }, [navigate]);
 
-  // Handle input change
+  // Clear success/error messages after 3s
+  useEffect(() => {
+    if (success || errors.general) {
+      const timer = setTimeout(() => {
+        setSuccess("");
+        setErrors(prev => ({ ...prev, general: "" }));
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success, errors.general]);
+
   const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -55,18 +65,19 @@ const SettingsPage = () => {
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
 
+    // Password change validation
     if (formData.newPassword || formData.confirmPassword) {
-      if (!formData.currentPassword)
-        newErrors.currentPassword = "Current password is required";
-      if (formData.newPassword.length < 6)
-        newErrors.newPassword = "Password must be at least 6 characters";
-      if (formData.newPassword !== formData.confirmPassword)
-        newErrors.confirmPassword = "Passwords do not match";
+      if (!formData.currentPassword) newErrors.currentPassword = "Current password is required";
+      if (formData.newPassword.length < 6) newErrors.newPassword = "Password must be at least 6 characters";
+      if (formData.newPassword !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+      // Check currentPassword matches stored password (for JSON server)
+      if (formData.currentPassword && formData.currentPassword !== currentUser?.password) {
+        newErrors.currentPassword = "Current password is incorrect";
+      }
     }
 
     return newErrors;
   };
-
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -82,11 +93,27 @@ const SettingsPage = () => {
     }
 
     try {
-      const updatedUser = { ...currentUser, name: formData.name, email: formData.email };
+      // Check for duplicate email
+      const allUsers = await usersAPI.getAll();
+      const duplicate = allUsers.find(u => u.email === formData.email && u.id !== currentUser.id);
+      if (duplicate) {
+        setErrors({ email: "Another account with this email already exists" });
+        setLoading(false);
+        return;
+      }
+
+      const updatedUser = { ...currentUser, name: formData.name.trim(), email: formData.email.trim() };
       if (formData.newPassword) updatedUser.password = formData.newPassword;
 
       await usersAPI.update(currentUser.id, updatedUser);
-      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+
+      // Store only safe info in localStorage
+      localStorage.setItem("currentUser", JSON.stringify({
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role
+      }));
       setCurrentUser(updatedUser);
 
       setSuccess("Profile updated successfully");
@@ -113,9 +140,7 @@ const SettingsPage = () => {
                 <h3>
                   <MdSettings className="me-2" />Account Settings
                 </h3>
-                <p className="text-muted mb-0">
-                  Update your profile information
-                </p>
+                <p className="text-muted mb-0">Update your profile information</p>
               </Card.Header>
 
               <Card.Body className="p-4">
@@ -158,7 +183,6 @@ const SettingsPage = () => {
 
                   <hr />
 
-                  {/* Change Password */}
                   <h5 className="mb-3">Change Password</h5>
                   <Row>
                     <Col md={4}>
@@ -170,6 +194,9 @@ const SettingsPage = () => {
                         onChange={handleChange}
                         isInvalid={!!errors.currentPassword}
                       />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.currentPassword}
+                      </Form.Control.Feedback>
                     </Col>
                     <Col md={4}>
                       <Form.Control
@@ -180,6 +207,9 @@ const SettingsPage = () => {
                         onChange={handleChange}
                         isInvalid={!!errors.newPassword}
                       />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.newPassword}
+                      </Form.Control.Feedback>
                     </Col>
                     <Col md={4}>
                       <Form.Control
@@ -190,10 +220,12 @@ const SettingsPage = () => {
                         onChange={handleChange}
                         isInvalid={!!errors.confirmPassword}
                       />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.confirmPassword}
+                      </Form.Control.Feedback>
                     </Col>
                   </Row>
 
-                  {/* Submit Button */}
                   <div className="text-end mt-4">
                     <Button type="submit" disabled={loading}>
                       <MdSave className="me-2" />
