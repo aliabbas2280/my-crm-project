@@ -1,309 +1,261 @@
-import { useEffect, useState, useCallback } from "react";
-import { Row, Col, Card, Table, Form } from "react-bootstrap";
-import { MdPeople,MdHandshake, MdAttachMoney,MdTrendingUp, MdHistory, MdMenu} from "react-icons/md";
-import Header from '../../components/Layout/Header';
-import AppNavbar from '../../components/Layout/Navbar';
-import { dashboardAPI, dealsAPI, activitiesAPI, clientsAPI } from '../../utils/api';
-import { useDebounce } from '../../hooks/useDebounce';
-import '../../CSS/Dashboard.css';
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { Row, Col, Card, Table, Alert, Spinner } from "react-bootstrap";
+import { MdMenu, MdClose } from "react-icons/md";
+import { FaDollarSign, FaHandshake, FaUsers, FaChartLine } from "react-icons/fa";
+import Header from "../../components/Layout/Header";
+import AppNavbar from "../../components/Layout/Navbar";
+import Pagination from "../../components/Common/Pagination";
+import { dealsAPI, activitiesAPI, metricsAPI } from "../../utils/api";
+import { useDebounce } from "../../hooks/useDebounce";
+import "../../CSS/Dashboard.css";
 
 const Dashboard = () => {
-  const [data, setData] = useState({
-    clients: [],
-    deals: [],
-    activities: [],
-    kpis: { totalRevenue: 0, activeDealsValue: 0, activeClients: 0, conversionRate: 0 }
+  // SERVER-SIDE: Search state - single source of truth
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
+  // Server-side state: data from API
+  const [deals, setDeals] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [totalDeals, setTotalDeals] = useState(0);
+  const [totalActivities, setTotalActivities] = useState(0);
+  const [metrics, setMetrics] = useState({
+    totalRevenue: 0,
+    activeDealsValue: 0,
+    activeClients: 0,
+    conversionRate: 0
   });
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [dealStatus, setDealStatus] = useState('');
-  const [activityType, setActivityType] = useState('');
+  const [error, setError] = useState("");
+
+  // Pagination state
+  const [dealsPage, setDealsPage] = useState(1);
+  const [activitiesPage, setActivitiesPage] = useState(1);
+  const dealsLimit = 5;
+  const activitiesLimit = 4;
+
+  // UI state
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
-  const debouncedSearch = useDebounce(searchTerm, 300);
-  const debouncedDealStatus = useDebounce(dealStatus, 300);
-  const debouncedActivityType = useDebounce(activityType, 300);
 
-  const calculateKPIs = useCallback((clients, deals) => {
-    const activeClients = clients.filter(c => c.status === 'Active').length;
-    const wonDeals = deals.filter(d => d.status === 'Won');
-    const activeDealsList = deals.filter(d => !['Won', 'Lost'].includes(d.status));
-    
-    const totalRevenue = wonDeals.reduce((sum, deal) => sum + Number(deal.value || 0), 0);
-    const activeDealsValue = activeDealsList.reduce((sum, deal) => sum + Number(deal.value || 0), 0);
-    const conversionRate = deals.length ? Math.round((wonDeals.length / deals.length) * 100) : 0;
-    
-    return { totalRevenue, activeDealsValue, activeClients, conversionRate };
-  }, []);
-
-  const fetchFilteredData = useCallback(async () => {
-    setLoading(true);
+  // MODIFIED: Memoized with useCallback
+  const fetchDashboardData = useCallback(async (search = "") => {
     try {
-      const dealParams = {};
-      const activityParams = {};
+      setLoading(true);
+      setError("");
+
+      // Always fetch metrics (not affected by search or pagination)
+      const metricsRes = await metricsAPI.getMetrics();
+      setMetrics(metricsRes);
+
+      // Build params for deals and activities with pagination
+      const dealsParams = { page: dealsPage, limit: dealsLimit };
+      const activitiesParams = { page: activitiesPage, limit: activitiesLimit };
       
-      if (debouncedSearch) {
-        dealParams.title_like = debouncedSearch;
-        activityParams.message_like = debouncedSearch;
-      }
-      if (debouncedDealStatus) {
-        dealParams.status = debouncedDealStatus;
-      }
-      if (debouncedActivityType) {
-        activityParams.type = debouncedActivityType;
+      if (search.trim()) {
+        dealsParams.q = search.trim();
+        activitiesParams.q = search.trim();
       }
 
-      const [clients, deals, activities] = await Promise.all([
-        clientsAPI.getAll(),
-        dealsAPI.getAll(dealParams),
-        activitiesAPI.getAll(activityParams)
+      const [dealsRes, activitiesRes] = await Promise.all([
+        dealsAPI.getAll(dealsParams),
+        activitiesAPI.getAll(activitiesParams)
       ]);
 
-      const kpis = calculateKPIs(clients, deals);
-      
-      setData({ clients, deals, activities, kpis });
-    } catch (error) {
-      console.error("Dashboard load failed", error);
+      // Replace data from API response
+      setDeals(dealsRes.data || dealsRes || []);
+      setActivities(activitiesRes.data || activitiesRes || []);
+      setTotalDeals(dealsRes.total || 0);
+      setTotalActivities(activitiesRes.total || 0);
+    } catch (err) {
+      console.error("Dashboard fetch error:", err);
+      setError(err.message || "Failed to load dashboard data. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, debouncedDealStatus, debouncedActivityType, calculateKPIs]);
+  }, [dealsPage, activitiesPage]);
 
+  // SERVER-SIDE: Handle search input changes
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  // Reset to page 1 when search changes
   useEffect(() => {
-    fetchFilteredData();
-  }, [fetchFilteredData]);
+    setDealsPage(1);
+    setActivitiesPage(1);
+  }, [debouncedSearch]);
 
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-  };
-
-  const handleDealStatusChange = (e) => {
-    setDealStatus(e.target.value);
-  };
-
-  const handleActivityTypeChange = (e) => {
-    setActivityType(e.target.value);
-  };
-
+  // SERVER-SIDE: Fetch data when page or search changes
+  useEffect(() => {
+    fetchDashboardData(debouncedSearch);
+  }, [debouncedSearch, fetchDashboardData]);
 
   if (loading) {
     return (
       <div className="loading-container">
-        <div className="loading-spinner"></div>
+        <Spinner animation="border" role="status" />
       </div>
     );
   }
 
+  if (error) {
+    return <Alert variant="danger" className="m-4">{error}</Alert>;
+  }
+
   return (
     <>
-      <button 
-        className="hamburger-menu d-lg-none" 
+      <button
+        className="hamburger-menu d-lg-none"
         onClick={() => setSidebarOpen(!sidebarOpen)}
+        aria-label={sidebarOpen ? "Close menu" : "Open menu"}
       >
-        <MdMenu />
+        {sidebarOpen ? <MdClose /> : <MdMenu />}
       </button>
-      
-      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
-      
+
+      {sidebarOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       <div className="dashboard-container">
         <div className="dashboard-content">
+          <Header
+            title="Dashboard"
+            subtitle="Welcome back to your CRM dashboard"
+            currentUser={JSON.parse(localStorage.getItem("currentUser") || "{}")}
+            onSearch={handleSearch}
+            searchValue={searchQuery}
+          />
 
-        <Header
-          title="Dashboard"
-          subtitle="Welcome back to your CRM dashboard"
-          currentUser={{ name: 'Ali Abbas' }}
-         
-          onSearch={handleSearch}
-          searchValue={searchTerm}
-        />
-        
-        <AppNavbar sidebarOpen={sidebarOpen} />
-        <Row className="g-4 mb-4">
-          <Col xs={12} sm={6} lg={3}>
-            <Card className="modern-kpi-card">
-              <div className="kpi-header">
+          <AppNavbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+          <Row className="g-4 mb-4">
+            <Col xs={12} sm={6} lg={3}>
+              <Card className="modern-kpi-card">
                 <div className="kpi-icon-wrapper green">
-                  <MdAttachMoney className="kpi-icon" />
+                  <FaDollarSign />
                 </div>
-              </div>
-              <div className="kpi-content">
-                <h3 className="kpi-value">${data.kpis.totalRevenue.toLocaleString()}</h3>
-                <p className="kpi-label">Total Revenue</p>
-              </div>
-            </Card>
-          </Col>
-
-          <Col xs={12} sm={6} lg={3}>
-            <Card className="modern-kpi-card">
-              <div className="kpi-header">
+                <div className="kpi-content">
+                  <h3>${metrics.totalRevenue.toLocaleString()}</h3>
+                  <p>Total Revenue</p>
+                </div>
+              </Card>
+            </Col>
+            <Col xs={12} sm={6} lg={3}>
+              <Card className="modern-kpi-card">
                 <div className="kpi-icon-wrapper blue">
-                  <MdHandshake className="kpi-icon" />
+                  <FaHandshake />
                 </div>
-              </div>
-              <div className="kpi-content">
-                <h3 className="kpi-value">${data.kpis.activeDealsValue.toLocaleString()}</h3>
-                <p className="kpi-label">Active Deals Value</p>
-              </div>
-            </Card>
-          </Col>
-
-          <Col xs={12} sm={6} lg={3}>
-            <Card className="modern-kpi-card">
-              <div className="kpi-header">
-                <div className="kpi-icon-wrapper purple">
-                  <MdPeople className="kpi-icon" />
+                <div className="kpi-content">
+                  <h3>${metrics.activeDealsValue.toLocaleString()}</h3>
+                  <p>Active Deals Value</p>
                 </div>
-              </div>
-              <div className="kpi-content">
-                <h3 className="kpi-value">{data.kpis.activeClients}</h3>
-                <p className="kpi-label">Active Clients</p>
-              </div>
-            </Card>
-          </Col>
-
-          <Col xs={12} sm={6} lg={3}>
-            <Card className="modern-kpi-card">
-              <div className="kpi-header">
+              </Card>
+            </Col>
+            <Col xs={12} sm={6} lg={3}>
+              <Card className="modern-kpi-card">
                 <div className="kpi-icon-wrapper pink">
-                  <MdTrendingUp className="kpi-icon" />
+                  <FaUsers />
                 </div>
-              </div>
-              <div className="kpi-content">
-                <h3 className="kpi-value">{data.kpis.conversionRate}%</h3>
-                <p className="kpi-label">Conversion Rate</p>
-              </div>
-            </Card>
-          </Col>
-
-        </Row>
-        
-        <Row>
-         
-          <Col md={7}>
-            <Card className="modern-table-card">
-              <div className="table-header">
-                <h5 className="table-title">Recent Deals</h5>
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                  <Form.Select 
-                    size="sm" 
-                    value={dealStatus} 
-                    onChange={handleDealStatusChange}
-                    style={{width: '120px'}}
-                  >
-                    <option value="">All Status</option>
-                    <option value="Won">Won</option>
-                    <option value="Lost">Lost</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Qualified">Qualified</option>
-                  </Form.Select>
-                  <div className="kpi-icon-wrapper blue" style={{width: '32px', height: '32px', fontSize: '16px'}}>
-                    <MdHandshake />
-                  </div>
+                <div className="kpi-content">
+                  <h3>{metrics.activeClients}</h3>
+                  <p>Active Clients</p>
                 </div>
-              </div>
-
-              <div className="table-content">
-                {loading ? (
-                  <div className="text-center p-3">
-                    <div className="spinner-border spinner-border-sm" role="status"></div>
-                  </div>
-                ) : data.deals.length === 0 ? (
-                  <div className="empty-state">
-                    <div className="kpi-icon-wrapper blue" style={{width: '64px', height: '64px', fontSize: '32px', margin: '0 auto 16px'}}>
-                      <MdHandshake />
-                    </div>
-                    <h5>{searchTerm || dealStatus ? 'No matching deals' : 'No deals yet'}</h5>
-                    <p>{searchTerm || dealStatus ? 'Try different search terms or filters' : 'Start by creating your first deal'}</p>
-                  </div>
-                ) : (
-                 <div className="table-responsive">
-                  <Table className="modern-table">
-                    <thead>
-                      <tr>
-                        <th>Deal Name</th>
-                        <th>Status</th>
-                        <th>Value</th>
+              </Card>
+            </Col>
+            <Col xs={12} sm={6} lg={3}>
+              <Card className="modern-kpi-card">
+                <div className="kpi-icon-wrapper purple">
+                  <FaChartLine />
+                </div>
+                <div className="kpi-content">
+                  <h3>{metrics.conversionRate}%</h3>
+                  <p>Conversion Rate</p>
+                </div>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              <Card className="modern-table-card">
+                <h5>{searchQuery.trim() ? 'Search Results - Deals' : 'Recent Deals'}</h5>
+                <Table>
+                  <thead>
+                    <tr>
+                      <th>Deal</th>
+                      <th>Status</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {deals.map((d) => (
+                      <tr key={d.id}>
+                        <td>{d.title}</td>
+                        <td>{d.status}</td>
+                        <td>${Number(d.value || 0).toLocaleString()}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {data.deals.slice(-5).reverse().map(deal => (
-                        <tr key={deal.id}>
-                          <td>{deal.title}</td>
-                          <td>{deal.status}</td>
-                          <td>${Number(deal.value || 0).toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                  </div>
-                )}
-              </div>
-            </Card>
-          </Col>
-
-          <Col md={5}>
-            <Card className="modern-table-card">
-              <div className="table-header">
-                 <h5 className="table-title">Recent Activities</h5>
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                  <Form.Select 
-                    size="sm" 
-                    value={activityType} 
-                    onChange={handleActivityTypeChange}
-                    style={{width: '120px'}}
-                  >
-                    <option value="">All Types</option>
-                    <option value="Call">Call</option>
-                    <option value="Email">Email</option>
-                    <option value="Meeting">Meeting</option>
-                    <option value="Note">Note</option>
-                  </Form.Select>
-                  <div className="kpi-icon-wrapper purple" style={{width: '32px', height: '32px', fontSize: '16px'}}>
-                    <MdHistory />
-                  </div>
-                </div>
-              </div>
-
-              <div className="table-content">
-                {loading ? (
-                  <div className="text-center p-3">
-                    <div className="spinner-border spinner-border-sm" role="status"></div>
-                  </div>
-                ) : data.activities.length === 0 ? (
-                  <div className="empty-state">
-                    <div className="kpi-icon-wrapper purple" style={{width: '64px', height: '64px', fontSize: '32px', margin: '0 auto 16px'}}>
-                      <MdHistory />
-                    </div>
-                    <h5>{searchTerm || activityType ? 'No matching activities' : 'No activities yet'}</h5>
-                    <p>{searchTerm || activityType ? 'Try different search terms or filters' : 'Activities will appear here'}</p>
-                  </div>
-                ) : (
-                  <div className="table-responsive">
-                  <Table className="modern-table">
-                    <thead>
+                    ))}
+                    {deals.length === 0 && (
                       <tr>
-                        <th>Activity</th>
-                        <th>Type</th>
+                        <td colSpan="3" className="text-center text-muted">
+                          {searchQuery.trim() ? 'No deals found for your search' : 'No recent deals'}
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {data.activities.slice(-4).reverse().map(activity => (
-                        <tr key={activity.id}>
-                          <td>{activity.type}</td>
-                          <td>{activity.message}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                  </div>
+                    )}
+                  </tbody>
+                </Table>
+                {totalDeals > 0 && (
+                  <Pagination
+                    currentPage={dealsPage}
+                    totalRecords={totalDeals}
+                    limit={dealsLimit}
+                    onPageChange={setDealsPage}
+                  />
                 )}
-              </div>
-            </Card>
-          </Col>
-        </Row>
+              </Card>
+            </Col>
 
+            <Col md={6}>
+              <Card className="modern-table-card">
+                <h5>{searchQuery.trim() ? 'Search Results - Activities' : 'Recent Activities'}</h5>
+                <Table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Message</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activities.map((a) => (
+                      <tr key={a.id}>
+                        <td>{a.type}</td>
+                        <td>{a.message}</td>
+                      </tr>
+                    ))}
+                    {activities.length === 0 && (
+                      <tr>
+                        <td colSpan="2" className="text-center text-muted">
+                          {searchQuery.trim() ? 'No activities found for your search' : 'No recent activities'}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
+                {totalActivities > 0 && (
+                  <Pagination
+                    currentPage={activitiesPage}
+                    totalRecords={totalActivities}
+                    limit={activitiesLimit}
+                    onPageChange={setActivitiesPage}
+                  />
+                )}
+              </Card>
+            </Col>
+          </Row>
+        </div>
       </div>
-    </div>
     </>
   );
 };

@@ -7,9 +7,10 @@ export const useAuth = () => {
   const login = async (email, password) => {
     setLoading(true);
     try {
-      // usersAPI.login already returns the matched user
-      const user = await usersAPI.login(email, password);
+      const response = await usersAPI.login(email, password);
+      const user = response.data;
 
+      // Save user to localStorage (avoid storing password in real apps)
       localStorage.setItem(
         'currentUser',
         JSON.stringify({
@@ -28,13 +29,14 @@ export const useAuth = () => {
     }
   };
 
+ 
   const signup = async (formData) => {
     setLoading(true);
     try {
       // Fetch all users
-      const users = await usersAPI.getAll();
+      const { data: users } = await usersAPI.getAll();
 
-      // Check for existing email
+      // Check if email already exists
       const existingUser = users.find(u => u.email === formData.email);
       if (existingUser) {
         throw new Error('User with this email already exists');
@@ -51,7 +53,7 @@ export const useAuth = () => {
       const createdUser = await usersAPI.create(newUser);
       return { success: true, user: createdUser };
     } catch (error) {
-      throw error;
+      throw new Error(error.message || 'Signup failed');
     } finally {
       setLoading(false);
     }
@@ -64,9 +66,7 @@ export const useAuth = () => {
   const getCurrentUser = () => {
     const userData = localStorage.getItem('currentUser');
 
-    if (!userData || userData === 'undefined') {
-      return null;
-    }
+    if (!userData || userData === 'undefined') return null;
 
     try {
       return JSON.parse(userData);

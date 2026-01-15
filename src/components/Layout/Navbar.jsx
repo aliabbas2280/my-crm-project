@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { MdDashboard, MdPeople, MdHandshake, MdPerson, MdLogout, MdSettings } from 'react-icons/md';
+import { MdDashboard, MdPeople, MdHandshake, MdPerson, MdLogout, MdSettings, MdClose } from 'react-icons/md';
 import { ROUTES } from '../../constants/index';
 import './Navbar.css';
 
@@ -10,7 +10,7 @@ const navLinks = [
   { path: ROUTES.DEALS, label: 'Deals', icon: MdHandshake },
 ];
 
-const AppNavbar = ({ sidebarOpen }) => {
+const AppNavbar = ({ sidebarOpen, setSidebarOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentUser, setCurrentUser] = useState({ name: 'User', role: 'Sales' });
@@ -30,6 +30,10 @@ const AppNavbar = ({ sidebarOpen }) => {
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
     navigate(ROUTES.LOGIN);
+  };
+
+  const handleSettings = () => {
+    navigate(ROUTES.SETTINGS);
   };
 
   const isActive = (path) => location.pathname.startsWith(path);
@@ -65,16 +69,22 @@ const AppNavbar = ({ sidebarOpen }) => {
           </div>
         </div>
         <div className="sidebar-actions">
-          <MdSettings 
-            className="action-icon" 
-            onClick={() => navigate(ROUTES.SETTINGS)}
+          <button
+            className="action-icon-btn"
+            onClick={handleSettings}
+            aria-label="Settings"
             title="Settings"
-          />
-          <MdLogout 
-            className="action-icon" 
+          >
+            <MdSettings className="action-icon" />
+          </button>
+          <button
+            className="action-icon-btn"
             onClick={handleLogout}
+            aria-label="Logout"
             title="Logout"
-          />
+          >
+            <MdLogout className="action-icon" />
+          </button>
         </div>
       </div>
     </div>

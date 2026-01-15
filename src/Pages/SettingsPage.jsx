@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
-import { MdPerson, MdEmail, MdSave, MdSettings } from "react-icons/md";
+import { MdPerson, MdEmail, MdSave, MdSettings, MdMenu } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { usersAPI } from "../utils/api";
+import { ROUTES } from "../constants/index";
+import Header from "../components/Layout/Header";
+import AppNavbar from "../components/Layout/Navbar";
 import "../CSS/Settings.css";
 
 const SettingsPage = () => {
@@ -19,27 +22,54 @@ const SettingsPage = () => {
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Load current user on mount
   useEffect(() => {
     const storedUser = localStorage.getItem("currentUser");
-    if (!storedUser) {
-      navigate("/login", { replace: true });
-      return;
-    }
-    try {
-      const user = JSON.parse(storedUser);
-      setCurrentUser(user);
+    if (storedUser && storedUser !== 'undefined') {
+      try {
+        const user = JSON.parse(storedUser);
+        // Fetch full user data from API to get password
+        const fetchUserData = async () => {
+          try {
+            const { data: fullUser } = await usersAPI.getById(user.id);
+            setCurrentUser(fullUser);
+            setFormData(prev => ({
+              ...prev,
+              name: fullUser.name || "",
+              email: fullUser.email || ""
+            }));
+          } catch (error) {
+            console.error('Failed to fetch user data:', error);
+            setCurrentUser(user);
+            setFormData(prev => ({
+              ...prev,
+              name: user.name || "",
+              email: user.email || ""
+            }));
+          }
+        };
+        fetchUserData();
+      } catch {
+        const defaultUser = { name: 'User', email: '', role: 'Sales' };
+        setCurrentUser(defaultUser);
+        setFormData(prev => ({
+          ...prev,
+          name: defaultUser.name,
+          email: defaultUser.email
+        }));
+      }
+    } else {
+      const defaultUser = { name: 'User', email: '', role: 'Sales' };
+      setCurrentUser(defaultUser);
       setFormData(prev => ({
         ...prev,
-        name: user.name || "",
-        email: user.email || ""
+        name: defaultUser.name,
+        email: defaultUser.email
       }));
-    } catch {
-      localStorage.removeItem("currentUser");
-      navigate("/login", { replace: true });
     }
-  }, [navigate]);
+  }, []);
 
   // Clear success/error messages after 3s
   useEffect(() => {
@@ -94,7 +124,7 @@ const SettingsPage = () => {
 
     try {
       // Check for duplicate email
-      const allUsers = await usersAPI.getAll();
+      const { data: allUsers } = await usersAPI.getAll();
       const duplicate = allUsers.find(u => u.email === formData.email && u.id !== currentUser.id);
       if (duplicate) {
         setErrors({ email: "Another account with this email already exists" });
@@ -102,28 +132,40 @@ const SettingsPage = () => {
         return;
       }
 
-      const updatedUser = { ...currentUser, name: formData.name.trim(), email: formData.email.trim() };
-      if (formData.newPassword) updatedUser.password = formData.newPassword;
+      const updatedUser = { 
+        ...currentUser, 
+        name: formData.name.trim(), 
+        email: formData.email.trim() 
+      };
+      
+      if (formData.newPassword) {
+        updatedUser.password = formData.newPassword;
+      }
 
-      await usersAPI.update(currentUser.id, updatedUser);
+      // Server-side update
+      const response = await usersAPI.update(currentUser.id, updatedUser);
+      console.log('Update response:', response);
 
-      // Store only safe info in localStorage
+      // Update localStorage with new data (without password for security)
       localStorage.setItem("currentUser", JSON.stringify({
         id: updatedUser.id,
         name: updatedUser.name,
         email: updatedUser.email,
         role: updatedUser.role
       }));
+      
       setCurrentUser(updatedUser);
-
       setSuccess("Profile updated successfully");
+      
+      // Clear password fields
       setFormData(prev => ({
         ...prev,
         currentPassword: "",
         newPassword: "",
         confirmPassword: ""
       }));
-    } catch {
+    } catch (error) {
+      console.error('Update error:', error);
       setErrors({ general: "Failed to update profile. Try again." });
     } finally {
       setLoading(false);
@@ -131,17 +173,42 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="settings-container">
-      <Container>
-        <Row className="justify-content-center">
-          <Col lg={8}>
-            <Card className="settings-card">
-              <Card.Header className="settings-header">
-                <h3>
-                  <MdSettings className="me-2" />Account Settings
-                </h3>
-                <p className="text-muted mb-0">Update your profile information</p>
-              </Card.Header>
+    <>
+      <button
+        className="hamburger-menu d-lg-none"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+      >
+        <MdMenu />
+      </button>
+
+      {sidebarOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <div className="dashboard-container">
+        <div className="dashboard-content">
+          <Header
+            title="Settings"
+            subtitle="Manage your account settings"
+            currentUser={currentUser || {}}
+            showSearch={false}
+          />
+
+          <AppNavbar sidebarOpen={sidebarOpen} />
+
+          <Container>
+            <Row className="justify-content-center">
+              <Col lg={8}>
+                <Card className="settings-card">
+                  <Card.Header className="settings-header">
+                    <h3>
+                      <MdSettings className="me-2" />Account Settings
+                    </h3>
+                    <p className="text-muted mb-0">Update your profile information</p>
+                  </Card.Header>
 
               <Card.Body className="p-4">
                 {errors.general && <Alert variant="danger">{errors.general}</Alert>}
@@ -233,12 +300,14 @@ const SettingsPage = () => {
                     </Button>
                   </div>
                 </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      </div>
+    </>
   );
 };
 

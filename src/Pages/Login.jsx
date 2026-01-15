@@ -4,6 +4,7 @@ import { MdEmail, MdLock, MdLogin, MdBusiness } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 import { usersAPI } from '../utils/api';
 import { ROUTES } from '../constants/index';
+import { toast } from 'react-toastify';
 import '../CSS/LoginNew.css';
 
 const Login = () => {
@@ -23,8 +24,11 @@ const Login = () => {
     try {
       const response = await usersAPI.login(formData.email, formData.password);
       localStorage.setItem('currentUser', JSON.stringify(response.data));
+      toast.success('Login successful!');
       navigate(ROUTES.DASHBOARD);
     } catch (error) {
+      console.error('Login error:', error);
+      toast.error(error.message || 'Login failed. Please try again.');
       setError(error.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);

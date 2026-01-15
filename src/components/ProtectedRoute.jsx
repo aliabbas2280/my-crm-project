@@ -3,18 +3,16 @@ import { ROUTES } from '../constants/index';
 
 const ProtectedRoute = ({ children }) => {
   const currentUser = localStorage.getItem('currentUser');
-  
 
   if (!currentUser || currentUser === 'undefined') {
     return <Navigate to={ROUTES.LOGIN} replace />;
   }
 
   try {
-   
     JSON.parse(currentUser);
     return children;
   } catch (error) {
-  
+    console.error('Invalid user data in localStorage:', error);
     localStorage.removeItem('currentUser');
     return <Navigate to={ROUTES.LOGIN} replace />;
   }

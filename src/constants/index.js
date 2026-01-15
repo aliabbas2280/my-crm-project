@@ -1,9 +1,12 @@
+
+const API_BASE = 'http://localhost:5000';
+
 export const API_ENDPOINTS = {
-  USERS: 'http://localhost:5000/users',
-  CLIENTS: 'http://localhost:5000/clients',
-  DEALS: 'http://localhost:5000/deals',
-  ACTIVITIES: 'http://localhost:5000/activities',
-  DASHBOARD: 'http://localhost:5000/dashboard'   
+  USERS: `${API_BASE}/users`,
+  CLIENTS: `${API_BASE}/clients`,
+  DEALS: `${API_BASE}/deals`,
+  ACTIVITIES: `${API_BASE}/activities`,
+  DASHBOARD: `${API_BASE}/dashboard`
 };
 
 export const ROUTES = {

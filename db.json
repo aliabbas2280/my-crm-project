@@ -18,9 +18,9 @@
     },
     {
       "id": "1767773601191",
-      "name": "Ali Abbas",
+      "name": "Ali haider",
       "email": "aliabbas56715180@gmail.com",
-      "password": "656565",
+      "password": "212121",
       "role": "user",
       "createdAt": "2026-01-07T08:13:21.191Z"
     },
@@ -34,23 +34,6 @@
     }
   ],
   "clients": [
-    {
-      "name": "John Doe",
-      "email": "john@example.com",
-      "phone": "+1234567890",
-      "company": "ABC Corp",
-      "status": "Active",
-      "id": "1"
-    },
-    {
-      "id": "2",
-      "name": "Jane Smith",
-      "email": "jane@techcorp.com",
-      "phone": "+1987654321",
-      "company": "Tech Corp",
-      "status": "Active",
-      "createdAt": "2024-01-02T00:00:00.000Z"
-    },
     {
       "name": "AliAbbas",
       "email": "aliabbas56715180@gmail.com",
@@ -75,76 +58,107 @@
       "company": "Purelogix",
       "status": "Active",
       "createdAt": "2026-01-12T05:59:26.673Z"
+    },
+    {
+      "id": "8",
+      "name": "Mike Johnson",
+      "email": "mike@startup.com",
+      "phone": "+1555987654",
+      "company": "Startup Co",
+      "status": "Active",
+      "createdAt": "2024-01-04T00:00:00.000Z"
+    },
+    {
+      "id": "9",
+      "name": "Emily Davis",
+      "email": "emily@enterprise.com",
+      "phone": "+1555456789",
+      "company": "Enterprise Ltd",
+      "status": "Inactive",
+      "createdAt": "2024-01-05T00:00:00.000Z"
+    },
+    {
+      "id": "10",
+      "name": "David Brown",
+      "email": "david@solutions.com",
+      "phone": "+1555321654",
+      "company": "Solutions Group",
+      "status": "Active",
+      "createdAt": "2024-01-06T00:00:00.000Z"
     }
   ],
   "deals": [
     {
-      "id": "1",
-      "title": "Website Development",
-      "clientId": 1,
-      "clientName": "John Doe",
-      "userId": 1,
-      "userName": "Admin User",
-      "value": 50000,
-      "status": "Won",
-      "expectedCloseDate": "2024-02-15",
-      "createdAt": "2024-01-01T00:00:00.000Z"
-    },
-    {
-      "title": "Mobile App",
-      "clientId": 2,
-      "userId": 2,
-      "value": 75000,
-      "status": "Won",
-      "expectedCloseDate": "2024-03-01",
-      "clientName": "Jane Smith",
-      "userName": "John Sales",
-      "id": "2"
-    },
-    {
-      "title": "Amazone",
-      "clientId": "2",
-      "value": 25000,
+      "id": "8",
+      "title": "Data Analytics Platform",
+      "clientId": "8",
+      "value": 85000,
       "status": "Lead",
-      "expectedCloseDate": "2026-01-10",
-      "clientName": "Jane Smith",
-      "userName": "Current User",
-      "id": "1767773668282"
+      "expectedCloseDate": "2024-05-15",
+      "clientName": "Mike Johnson",
+      "userName": "John Sales",
+      "userId": 2,
+      "createdAt": "2024-01-04T00:00:00.000Z"
     },
     {
-      "id": "1767794401599",
-      "title": "Seo Optimization",
-      "clientId": "1767788282252",
-      "value": 2000,
-      "status": "Won",
-      "expectedCloseDate": "2026-01-07",
-      "clientName": "AliAbbas",
-      "userName": "Current User",
+      "id": "9",
+      "title": "Security Audit",
+      "clientId": "9",
+      "value": 35000,
+      "status": "Qualified",
+      "expectedCloseDate": "2024-03-20",
+      "clientName": "Emily Davis",
+      "userName": "Admin User",
       "userId": 1,
-      "createdAt": "2026-01-07T14:00:01.599Z"
+      "createdAt": "2024-01-05T00:00:00.000Z"
     },
     {
-      "title": "Ecommerce",
-      "clientId": "1767868285378",
-      "value": 1000,
-      "status": "Won",
-      "expectedCloseDate": "2026-01-31",
-      "clientName": "Atiq",
-      "userName": "Current User",
-      "userId": 1,
-      "id": "1767868343810"
+      "id": "10",
+      "title": "API Integration",
+      "clientId": "10",
+      "value": 45000,
+      "status": "Lost",
+      "expectedCloseDate": "2024-06-01",
+      "clientName": "David Brown",
+      "userName": "John Sales",
+      "userId": 2,
+      "createdAt": "2024-01-06T00:00:00.000Z"
     },
     {
-      "id": "1768197614399",
-      "title": "Crypto",
+      "title": "Web Development",
       "clientId": "1768197566673",
-      "value": 2000,
-      "status": "Won",
-      "expectedCloseDate": "2026-01-15",
+      "value": "3000",
+      "status": "Proposal",
+      "expectedCloseDate": "2026-01-31",
       "clientName": "Hassan",
-      "userName": "Current User",
-      "userId": 1,
-      "createdAt": "2026-01-12T06:00:14.399Z"
+      "userId": "1767773601191",
+      "userName": "Ali haider",
+      "id": "1768484222222",
+      "createdAt": "2026-01-15T13:37:02.222Z"
+    },
+    {
+      "title": "QA",
+      "clientId": "8",
+      "value": "50000",
+      "status": "Won",
+      "expectedCloseDate": "2026-01-25",
+      "clientName": "Mike Johnson",
+      "userId": "1767773601191",
+      "userName": "Ali haider",
+      "id": "1768484270919",
+      "createdAt": "2026-01-15T13:37:50.919Z"
+    },
+    {
+      "title": " Graphic Design",
+      "clientId": "10",
+      "value": "1000",
+      "status": "Qualified",
+      "expectedCloseDate": "2026-01-20",
+      "clientName": "David Brown",
+      "userId": "1767773601191",
+      "userName": "Ali haider",
+      "id": "1768484532151",
+      "createdAt": "2026-01-15T13:42:12.151Z"
     }
   ],
   "activities": [
@@ -435,6 +449,118 @@
       "type": "deal_updated",
       "message": "Deal 'Amazone' updated",
       "date": "2026-01-12"
+    },
+    {
+      "id": "1768405412159",
+      "type": "client_created",
+      "message": "New client Adeel added",
+      "userId": "1767773601191",
+      "createdAt": "2026-01-14T15:43:32.159Z"
+    },
+    {
+      "id": "1768408060460",
+      "type": "deal_created",
+      "message": "New deal \"Dweal\" created",
+      "userId": "1767773601191",
+      "createdAt": "2026-01-14T16:27:40.460Z"
+    },
+    {
+      "id": "1768415534729",
+      "type": "client_deleted",
+      "message": "Client John Doe deleted",
+      "userId": "1767773601191",
+      "createdAt": "2026-01-14T18:32:14.729Z"
+    },
+    {
+      "type": "deal_status_changed",
+      "message": "Deal \"Amazone\" status changed to Won",
+      "userId": "1767773601191",
+      "id": "1768463753644",
+      "createdAt": "2026-01-15T07:55:53.644Z"
+    },
+    {
+      "type": "deal_updated",
+      "message": "Deal \"Seo Optimization\" updated",
+      "userId": "1767773601191",
+      "id": "1768466034030",
+      "createdAt": "2026-01-15T08:33:54.030Z"
+    },
+    {
+      "type": "deal_status_changed",
+      "message": "Deal \"Website Development\" status changed to Won",
+      "userId": "1767773601191",
+      "id": "1768468438139",
+      "createdAt": "2026-01-15T09:13:58.139Z"
+    },
+    {
+      "type": "deal_status_changed",
+      "message": "Deal \"Dweal\" status changed to Proposal",
+      "userId": "1767773601191",
+      "id": "1768477510533",
+      "createdAt": "2026-01-15T11:45:10.533Z"
+    },
+    {
+      "type": "deal_status_changed",
+      "message": "Deal \"API Integration\" status changed to Lost",
+      "userId": "1767773601191",
+      "id": "1768477514922",
+      "createdAt": "2026-01-15T11:45:14.922Z"
+    },
+    {
+      "type": "deal_status_changed",
+      "message": "Deal \"deal\" status changed to Proposal",
+      "userId": "1767773601191",
+      "id": "1768477520108",
+      "createdAt": "2026-01-15T11:45:20.108Z"
+    },
+    {
+      "type": "deal_deleted",
+      "message": "Deal \"Dweal\" deleted",
+      "userId": "1767773601191",
+      "id": "1768484156168",
+      "createdAt": "2026-01-15T13:35:56.168Z"
+    },
+    {
+      "type": "deal_deleted",
+      "message": "Deal \"Crypto\" deleted",
+      "userId": "1767773601191",
+      "id": "1768484161795",
+      "createdAt": "2026-01-15T13:36:01.795Z"
+    },
+    {
+      "type": "deal_created",
+      "message": "New deal \"Web Development\" created",
+      "userId": "1767773601191",
+      "id": "1768484222252",
+      "createdAt": "2026-01-15T13:37:02.252Z"
+    },
+    {
+      "type": "deal_created",
+      "message": "New deal \"Backend\" created",
+      "userId": "1767773601191",
+      "id": "1768484247676",
+      "createdAt": "2026-01-15T13:37:27.676Z"
+    },
+    {
+      "type": "deal_created",
+      "message": "New deal \"QA\" created",
+      "userId": "1767773601191",
+      "id": "1768484270941",
+      "createdAt": "2026-01-15T13:37:50.941Z"
+    },
+    {
+      "type": "deal_created",
+      "message": "New deal \" Graphic Design\" created",
+      "userId": "1767773601191",
+      "id": "1768484532168",
+      "createdAt": "2026-01-15T13:42:12.168Z"
+    },
+    {
+      "type": "deal_deleted",
+      "message": "Deal \"Backend\" deleted",
+      "userId": "1767773601191",
+      "id": "1768484553159",
+      "createdAt": "2026-01-15T13:42:33.159Z"
     }
   ]
 }

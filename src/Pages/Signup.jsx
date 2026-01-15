@@ -4,6 +4,7 @@ import { MdPerson, MdEmail, MdLock, MdPersonAdd, MdBusiness } from 'react-icons/
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { ROUTES } from '../constants/index';
+import { toast } from 'react-toastify';
 import '../CSS/Signup.css';
 
 const Signup = () => {
@@ -63,10 +64,12 @@ const Signup = () => {
     if (Object.keys(newErrors).length === 0) {
       try {
         await signup(formData);
-        alert('Account created successfully! You can now login.');
+        toast.success('Account created successfully!');
         navigate(ROUTES.LOGIN);
       } catch (error) {
-        setErrors({ general: error.message });
+        console.error('Signup error:', error);
+        toast.error(error.message || 'Signup failed. Please try again.');
+        setErrors({ general: error.message || 'Signup failed. Please try again.' });
       }
     }
   };

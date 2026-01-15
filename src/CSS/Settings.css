@@ -2,16 +2,11 @@
    SETTINGS PAGE LAYOUT
    ================================ */
 
-/* 
-  Sidebar-aware layout
-  Sidebar width = 280px
-  Automatically removed on mobile
-*/
 .settings-container {
-  margin-left: 280px; /* matches sidebar */
+  margin-left: 280px;
   padding: 2rem;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   transition: margin 0.3s ease;
 }
 
@@ -21,9 +16,16 @@
 
 .settings-card {
   border: none;
-  border-radius: 16px;
+  border-radius: 20px;
   background-color: #ffffff;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.settings-card:hover {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 /* ================================
@@ -33,48 +35,81 @@
 .settings-header {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: #ffffff;
-  border-radius: 16px 16px 0 0;
-  padding: 1.5rem 2rem;
+  border-radius: 20px 20px 0 0;
+  padding: 2rem;
   border-bottom: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.settings-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 250px;
+  height: 250px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  z-index: 0;
 }
 
 .settings-header h3 {
-  margin: 0;
-  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 1;
+  font-size: 1.75rem;
+}
+
+.settings-header p {
+  position: relative;
+  z-index: 1;
 }
 
 /* ================================
    FORM INPUTS
    ================================ */
 
-/* 
-  We now rely on Bootstrap validation
-  so no custom .settings-input class
-*/
 .form-control {
-  border-radius: 8px;
-  padding: 0.7rem 0.75rem;
+  border-radius: 12px;
+  padding: 0.875rem 1rem;
   font-size: 0.95rem;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
 }
 
 .form-control:focus {
   border-color: #667eea;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+  transform: translateY(-1px);
 }
 
-/* Bootstrap invalid override (cleaner look) */
 .form-control.is-invalid {
   border-color: #dc3545;
   box-shadow: none;
 }
 
-/* Error text */
+.form-control.is-invalid:focus {
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.15);
+}
+
 .invalid-feedback {
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* ================================
@@ -84,19 +119,24 @@
 .settings-save-btn {
   background: linear-gradient(135deg, #667eea, #764ba2);
   border: none;
-  border-radius: 8px;
-  padding: 0.65rem 1.8rem;
+  border-radius: 12px;
+  padding: 0.875rem 2rem;
   font-weight: 600;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .settings-save-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(102, 126, 234, 0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.settings-save-btn:active:not(:disabled) {
+  transform: translateY(-1px);
 }
 
 .settings-save-btn:disabled {
-  opacity: 0.65;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
@@ -106,27 +146,97 @@
 
 .settings-card hr {
   margin: 2rem 0;
-  opacity: 0.1;
+  opacity: 0.15;
+  border-top: 2px solid #e5e7eb;
+}
+
+.settings-card h5 {
+  color: #374151;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
 }
 
 /* ================================
    RESPONSIVE FIX
    ================================ */
 
-@media (max-width: 992px) {
-  /* Sidebar usually collapses here */
+@media (max-width: 991px) {
   .settings-container {
     margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-container {
+    margin-left: 0;
+    padding: 1.5rem 1rem;
+  }
+
+  .settings-header {
     padding: 1.5rem;
+  }
+  
+  .settings-header h3 {
+    font-size: 1.5rem;
+  }
+  
+  .settings-card .p-4 {
+    padding: 1.5rem !important;
   }
 }
 
 @media (max-width: 576px) {
   .settings-container {
-    padding: 1rem;
+    padding: 1rem 0.75rem;
   }
 
   .settings-header {
     padding: 1.25rem;
+    border-radius: 16px 16px 0 0;
+  }
+  
+  .settings-header h3 {
+    font-size: 1.25rem;
+  }
+  
+  .settings-card .p-4 {
+    padding: 1.25rem !important;
+  }
+  
+  .form-control {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.9rem;
+  }
+  
+  .settings-save-btn {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .settings-container {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .settings-header {
+    padding: 1rem;
+  }
+  
+  .settings-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .settings-card .p-4 {
+    padding: 1rem !important;
+  }
+  
+  .form-label {
+    font-size: 0.875rem;
+  }
+  
+  .form-control {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.85rem;
   }
 }
