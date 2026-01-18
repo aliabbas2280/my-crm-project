@@ -10,7 +10,6 @@ export const useAuth = () => {
       const response = await usersAPI.login(email, password);
       const user = response.data;
 
-      // Save user to localStorage (avoid storing password in real apps)
       localStorage.setItem(
         'currentUser',
         JSON.stringify({
@@ -33,16 +32,12 @@ export const useAuth = () => {
   const signup = async (formData) => {
     setLoading(true);
     try {
-      // Fetch all users
       const { data: users } = await usersAPI.getAll();
 
-      // Check if email already exists
       const existingUser = users.find(u => u.email === formData.email);
       if (existingUser) {
         throw new Error('User with this email already exists');
       }
-
-      // Create new user
       const newUser = {
         name: formData.name,
         email: formData.email,

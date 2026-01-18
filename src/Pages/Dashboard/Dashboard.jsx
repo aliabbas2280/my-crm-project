@@ -1,105 +1,98 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Row, Col, Card, Table, Alert, Spinner } from "react-bootstrap";
 import { MdMenu, MdClose } from "react-icons/md";
 import { FaDollarSign, FaHandshake, FaUsers, FaChartLine } from "react-icons/fa";
 import Header from "../../components/Layout/Header";
 import AppNavbar from "../../components/Layout/Navbar";
-import Pagination from "../../components/Common/Pagination";
 import { dealsAPI, activitiesAPI, metricsAPI } from "../../utils/api";
 import { useDebounce } from "../../hooks/useDebounce";
+import { useAuth } from "../../hooks/useAuth";
 import "../../CSS/Dashboard.css";
 
 const Dashboard = () => {
-  // SERVER-SIDE: Search state - single source of truth
+  const { getCurrentUser } = useAuth();
+  const user = getCurrentUser();
+  
   const [searchQuery, setSearchQuery] = useState("");
-  const debouncedSearch = useDebounce(searchQuery, 300);
-
-  // Server-side state: data from API
+  const debouncedSearch = useDebounce(searchQuery, 800);
   const [deals, setDeals] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [totalDeals, setTotalDeals] = useState(0);
-  const [totalActivities, setTotalActivities] = useState(0);
-  const [metrics, setMetrics] = useState({
-    totalRevenue: 0,
-    activeDealsValue: 0,
-    activeClients: 0,
-    conversionRate: 0
-  });
+  const [metrics, setMetrics] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // Pagination state
-  const [dealsPage, setDealsPage] = useState(1);
-  const [activitiesPage, setActivitiesPage] = useState(1);
-  const dealsLimit = 5;
-  const activitiesLimit = 4;
-
-  // UI state
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dealsCurrentPage, setDealsCurrentPage] = useState(1);
+  const [activitiesCurrentPage, setActivitiesCurrentPage] = useState(1);
+  const dealsItemsPerPage = 5;
+  const activitiesItemsPerPage = 4;
 
-  // MODIFIED: Memoized with useCallback
-  const fetchDashboardData = useCallback(async (search = "") => {
+  const fetchDashboardData = async () => {
     try {
       setLoading(true);
       setError("");
-
-      // Always fetch metrics (not affected by search or pagination)
       const metricsRes = await metricsAPI.getMetrics();
       setMetrics(metricsRes);
 
-      // Build params for deals and activities with pagination
-      const dealsParams = { page: dealsPage, limit: dealsLimit };
-      const activitiesParams = { page: activitiesPage, limit: activitiesLimit };
-      
-      if (search.trim()) {
-        dealsParams.q = search.trim();
-        activitiesParams.q = search.trim();
-      }
-
       const [dealsRes, activitiesRes] = await Promise.all([
-        dealsAPI.getAll(dealsParams),
-        activitiesAPI.getAll(activitiesParams)
+        dealsAPI.getAll(),
+        activitiesAPI.getAll(),
       ]);
 
-      // Replace data from API response
-      setDeals(dealsRes.data || dealsRes || []);
-      setActivities(activitiesRes.data || activitiesRes || []);
-      setTotalDeals(dealsRes.total || 0);
-      setTotalActivities(activitiesRes.total || 0);
+      
+      setDeals(dealsRes.data || []);
+      setActivities(activitiesRes.data || []);
     } catch (err) {
       console.error("Dashboard fetch error:", err);
-      setError(err.message || "Failed to load dashboard data. Please try again.");
+      setError("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
-  }, [dealsPage, activitiesPage]);
-
-  // SERVER-SIDE: Handle search input changes
-  const handleSearch = (query) => {
-    setSearchQuery(query);
   };
 
-  // Reset to page 1 when search changes
   useEffect(() => {
-    setDealsPage(1);
-    setActivitiesPage(1);
-  }, [debouncedSearch]);
+    fetchDashboardData();
+  }, []);
 
-  // SERVER-SIDE: Fetch data when page or search changes
+
+  const filteredDeals = deals.filter(
+    (d) =>
+      d.title?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+      d.status?.toLowerCase().includes(debouncedSearch.toLowerCase())
+  );
+
+  const filteredActivities = activities.filter(
+    (a) =>
+      a.type?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+      a.message?.toLowerCase().includes(debouncedSearch.toLowerCase())
+  );
+
+  const dealsTotalPages = Math.ceil(filteredDeals.length / dealsItemsPerPage);
+  const paginatedDeals = filteredDeals.slice(
+    (dealsCurrentPage - 1) * dealsItemsPerPage,
+    dealsCurrentPage * dealsItemsPerPage
+  );
+
+  const activitiesTotalPages = Math.ceil(filteredActivities.length / activitiesItemsPerPage);
+  const paginatedActivities = filteredActivities.slice(
+    (activitiesCurrentPage - 1) * activitiesItemsPerPage,
+    activitiesCurrentPage * activitiesItemsPerPage
+  );
+
   useEffect(() => {
-    fetchDashboardData(debouncedSearch);
-  }, [debouncedSearch, fetchDashboardData]);
+    setDealsCurrentPage(1);
+    setActivitiesCurrentPage(1);
+  }, [debouncedSearch]);
 
   if (loading) {
     return (
       <div className="loading-container">
-        <Spinner animation="border" role="status" />
+        <Spinner animation="border" />
       </div>
     );
   }
 
   if (error) {
-    return <Alert variant="danger" className="m-4">{error}</Alert>;
+    return <Alert variant="danger">{error}</Alert>;
   }
 
   return (
@@ -107,157 +100,148 @@ const Dashboard = () => {
       <button
         className="hamburger-menu d-lg-none"
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        aria-label={sidebarOpen ? "Close menu" : "Open menu"}
       >
         {sidebarOpen ? <MdClose /> : <MdMenu />}
       </button>
 
-      {sidebarOpen && (
-        <div
-          className="sidebar-overlay"
-          onClick={() => setSidebarOpen(false)}
+      <div className="dashboard-container" style={{padding: '2rem'}}>
+        <Header
+          title="Dashboard"
+          subtitle={`Welcome back, ${user?.name || 'User'}`}
+          onSearch={setSearchQuery}
+          searchValue={searchQuery}
         />
-      )}
 
-      <div className="dashboard-container">
-        <div className="dashboard-content">
-          <Header
-            title="Dashboard"
-            subtitle="Welcome back to your CRM dashboard"
-            currentUser={JSON.parse(localStorage.getItem("currentUser") || "{}")}
-            onSearch={handleSearch}
-            searchValue={searchQuery}
-          />
+        <AppNavbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-          <AppNavbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <Row className="g-4 mb-4">
+          <Col lg={3}>
+            <KPI icon={<FaDollarSign />} value={`$${metrics.totalRevenue?.toLocaleString()}`} label="Revenue" color="green" />
+          </Col>
+          <Col lg={3}>
+            <KPI icon={<FaHandshake />} value={`$${metrics.activeDealsValue?.toLocaleString()}`} label="Deals Value" color="blue" />
+          </Col>
+          <Col lg={3}>
+            <KPI icon={<FaUsers />} value={metrics.activeClients} label="Clients" color="pink" />
+          </Col>
+          <Col lg={3}>
+            <KPI icon={<FaChartLine />} value={`${metrics.conversionRate}%`} label="Conversion" color="purple" />
+          </Col>
+        </Row>
 
-          <Row className="g-4 mb-4">
-            <Col xs={12} sm={6} lg={3}>
-              <Card className="modern-kpi-card">
-                <div className="kpi-icon-wrapper green">
-                  <FaDollarSign />
-                </div>
-                <div className="kpi-content">
-                  <h3>${metrics.totalRevenue.toLocaleString()}</h3>
-                  <p>Total Revenue</p>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={12} sm={6} lg={3}>
-              <Card className="modern-kpi-card">
-                <div className="kpi-icon-wrapper blue">
-                  <FaHandshake />
-                </div>
-                <div className="kpi-content">
-                  <h3>${metrics.activeDealsValue.toLocaleString()}</h3>
-                  <p>Active Deals Value</p>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={12} sm={6} lg={3}>
-              <Card className="modern-kpi-card">
-                <div className="kpi-icon-wrapper pink">
-                  <FaUsers />
-                </div>
-                <div className="kpi-content">
-                  <h3>{metrics.activeClients}</h3>
-                  <p>Active Clients</p>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={12} sm={6} lg={3}>
-              <Card className="modern-kpi-card">
-                <div className="kpi-icon-wrapper purple">
-                  <FaChartLine />
-                </div>
-                <div className="kpi-content">
-                  <h3>{metrics.conversionRate}%</h3>
-                  <p>Conversion Rate</p>
-                </div>
-              </Card>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
-              <Card className="modern-table-card">
-                <h5>{searchQuery.trim() ? 'Search Results - Deals' : 'Recent Deals'}</h5>
+        <Row>
+          <Col md={6}>
+            <Card className="modern-table-card" style={{minHeight: '400px', display: 'flex', flexDirection: 'column'}}>
+              <h5>{debouncedSearch ? "Search Results - Deals" : "Recent Deals"}</h5>
+              <div style={{flex: 1}}>
                 <Table>
-                  <thead>
-                    <tr>
-                      <th>Deal</th>
-                      <th>Status</th>
-                      <th>Value</th>
-                    </tr>
-                  </thead>
                   <tbody>
-                    {deals.map((d) => (
+                    {paginatedDeals.map((d) => (
                       <tr key={d.id}>
                         <td>{d.title}</td>
                         <td>{d.status}</td>
                         <td>${Number(d.value || 0).toLocaleString()}</td>
                       </tr>
                     ))}
-                    {deals.length === 0 && (
+                    {filteredDeals.length === 0 && (
                       <tr>
                         <td colSpan="3" className="text-center text-muted">
-                          {searchQuery.trim() ? 'No deals found for your search' : 'No recent deals'}
+                          {debouncedSearch ? "No deals found for your search" : "No recent deals"}
                         </td>
                       </tr>
                     )}
                   </tbody>
                 </Table>
-                {totalDeals > 0 && (
-                  <Pagination
-                    currentPage={dealsPage}
-                    totalRecords={totalDeals}
-                    limit={dealsLimit}
-                    onPageChange={setDealsPage}
-                  />
-                )}
-              </Card>
-            </Col>
+              </div>
+              {filteredDeals.length > 0 && (
+                <div className="pagination-container" style={{marginTop: 'auto'}}>
+                  <div className="pagination-info">
+                    Showing {(dealsCurrentPage - 1) * dealsItemsPerPage + 1} to {Math.min(dealsCurrentPage * dealsItemsPerPage, filteredDeals.length)} of {filteredDeals.length}
+                  </div>
+                  <div className="pagination-controls">
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => setDealsCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={dealsCurrentPage === 1}
+                    >
+                      Previous
+                    </button>
+                    <span className="mx-2">Page {dealsCurrentPage} of {dealsTotalPages}</span>
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => setDealsCurrentPage(p => Math.min(dealsTotalPages, p + 1))}
+                      disabled={dealsCurrentPage === dealsTotalPages}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
+            </Card>
+          </Col>
 
-            <Col md={6}>
-              <Card className="modern-table-card">
-                <h5>{searchQuery.trim() ? 'Search Results - Activities' : 'Recent Activities'}</h5>
+          <Col md={6}>
+            <Card className="modern-table-card" style={{minHeight: '400px', display: 'flex', flexDirection: 'column'}}>
+              <h5>{debouncedSearch ? "Search Results - Activities" : "Recent Activities"}</h5>
+              <div style={{flex: 1}}>
                 <Table>
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Message</th>
-                    </tr>
-                  </thead>
                   <tbody>
-                    {activities.map((a) => (
+                    {paginatedActivities.map((a) => (
                       <tr key={a.id}>
                         <td>{a.type}</td>
                         <td>{a.message}</td>
                       </tr>
                     ))}
-                    {activities.length === 0 && (
+                    {filteredActivities.length === 0 && (
                       <tr>
                         <td colSpan="2" className="text-center text-muted">
-                          {searchQuery.trim() ? 'No activities found for your search' : 'No recent activities'}
+                          {debouncedSearch ? "No activities found for your search" : "No recent activities"}
                         </td>
                       </tr>
                     )}
                   </tbody>
                 </Table>
-                {totalActivities > 0 && (
-                  <Pagination
-                    currentPage={activitiesPage}
-                    totalRecords={totalActivities}
-                    limit={activitiesLimit}
-                    onPageChange={setActivitiesPage}
-                  />
-                )}
-              </Card>
-            </Col>
-          </Row>
-        </div>
+              </div>
+              {filteredActivities.length > 0 && (
+                <div className="pagination-container" style={{marginTop: 'auto'}}>
+                  <div className="pagination-info">
+                    Showing {(activitiesCurrentPage - 1) * activitiesItemsPerPage + 1} to {Math.min(activitiesCurrentPage * activitiesItemsPerPage, filteredActivities.length)} of {filteredActivities.length}
+                  </div>
+                  <div className="pagination-controls">
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => setActivitiesCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={activitiesCurrentPage === 1}
+                    >
+                      Previous
+                    </button>
+                    <span className="mx-2">Page {activitiesCurrentPage} of {activitiesTotalPages}</span>
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => setActivitiesCurrentPage(p => Math.min(activitiesTotalPages, p + 1))}
+                      disabled={activitiesCurrentPage === activitiesTotalPages}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
+            </Card>
+          </Col>
+        </Row>
       </div>
     </>
   );
 };
+
+const KPI = ({ icon, value, label, color }) => (
+  <Card className="modern-kpi-card">
+    <div className="kpi-content">
+      <div className={`kpi-icon-wrapper ${color}`}>{icon}</div>
+      <h3>{value}</h3>
+      <p>{label}</p>
+    </div>
+  </Card>
+);
 
 export default Dashboard;

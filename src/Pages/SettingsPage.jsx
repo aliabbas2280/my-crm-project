@@ -24,13 +24,11 @@ const SettingsPage = () => {
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Load current user on mount
   useEffect(() => {
     const storedUser = localStorage.getItem("currentUser");
     if (storedUser && storedUser !== 'undefined') {
       try {
         const user = JSON.parse(storedUser);
-        // Fetch full user data from API to get password
         const fetchUserData = async () => {
           try {
             const { data: fullUser } = await usersAPI.getById(user.id);
@@ -71,7 +69,6 @@ const SettingsPage = () => {
     }
   }, []);
 
-  // Clear success/error messages after 3s
   useEffect(() => {
     if (success || errors.general) {
       const timer = setTimeout(() => {
@@ -95,12 +92,10 @@ const SettingsPage = () => {
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
 
-    // Password change validation
     if (formData.newPassword || formData.confirmPassword) {
       if (!formData.currentPassword) newErrors.currentPassword = "Current password is required";
       if (formData.newPassword.length < 6) newErrors.newPassword = "Password must be at least 6 characters";
       if (formData.newPassword !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
-      // Check currentPassword matches stored password (for JSON server)
       if (formData.currentPassword && formData.currentPassword !== currentUser?.password) {
         newErrors.currentPassword = "Current password is incorrect";
       }
@@ -123,7 +118,6 @@ const SettingsPage = () => {
     }
 
     try {
-      // Check for duplicate email
       const { data: allUsers } = await usersAPI.getAll();
       const duplicate = allUsers.find(u => u.email === formData.email && u.id !== currentUser.id);
       if (duplicate) {
@@ -142,11 +136,9 @@ const SettingsPage = () => {
         updatedUser.password = formData.newPassword;
       }
 
-      // Server-side update
       const response = await usersAPI.update(currentUser.id, updatedUser);
       console.log('Update response:', response);
 
-      // Update localStorage with new data (without password for security)
       localStorage.setItem("currentUser", JSON.stringify({
         id: updatedUser.id,
         name: updatedUser.name,
@@ -157,7 +149,6 @@ const SettingsPage = () => {
       setCurrentUser(updatedUser);
       setSuccess("Profile updated successfully");
       
-      // Clear password fields
       setFormData(prev => ({
         ...prev,
         currentPassword: "",

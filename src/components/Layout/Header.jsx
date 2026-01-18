@@ -1,6 +1,9 @@
 import { MdSearch } from 'react-icons/md';
+import { useAuth } from '../../hooks/useAuth';
 
-const Header = ({ title, subtitle, currentUser, onSearch, searchValue, showSearch = true }) => {
+const Header = ({ title, subtitle, onSearch, searchValue, showSearch = true }) => {
+  const { getCurrentUser } = useAuth();
+  const user = getCurrentUser();
   const handleSearchChange = (e) => {
     const value = e.target.value;
     if (onSearch) {
@@ -14,7 +17,7 @@ const Header = ({ title, subtitle, currentUser, onSearch, searchValue, showSearc
         <div className="header-left">
           <h1 className="header-title">{title}</h1>
           <p className="header-subtitle">
-            Hello {currentUser?.name || 'User'} , {subtitle}
+            Hello {user?.name || 'User'} , {subtitle}
           </p>
         </div>
         

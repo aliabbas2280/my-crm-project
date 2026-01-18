@@ -18,9 +18,9 @@
     },
     {
       "id": "1767773601191",
-      "name": "Ali haider",
+      "name": "Ali Abbas",
       "email": "aliabbas56715180@gmail.com",
-      "password": "212121",
+      "password": "121212",
       "role": "user",
       "createdAt": "2026-01-07T08:13:21.191Z"
     },
@@ -31,6 +31,14 @@
       "password": "676767",
       "role": "user",
       "createdAt": "2026-01-08T06:37:01.611Z"
+    },
+    {
+      "name": "Sanan",
+      "email": "sanan@gmail.com",
+      "password": "454545",
+      "role": "user",
+      "id": "1768749365722",
+      "createdAt": "2026-01-18T15:16:05.722Z"
     }
   ],
   "clients": [
@@ -47,7 +55,7 @@
       "email": "Atiq@gmail.com",
       "phone": "03187345332",
       "company": "KFC",
-      "status": "Active",
+      "status": "Inactive",
       "id": "1767868285378"
     },
     {
@@ -58,15 +66,6 @@
       "company": "Purelogix",
       "status": "Active",
       "createdAt": "2026-01-12T05:59:26.673Z"
-    },
-    {
-      "id": "8",
-      "name": "Mike Johnson",
-      "email": "mike@startup.com",
-      "phone": "+1555987654",
-      "company": "Startup Co",
-      "status": "Active",
-      "createdAt": "2024-01-04T00:00:00.000Z"
     },
     {
       "id": "9",
@@ -85,21 +84,36 @@
       "company": "Solutions Group",
       "status": "Active",
       "createdAt": "2024-01-06T00:00:00.000Z"
+    },
+    {
+      "name": "Tauqeer",
+      "email": "tauqeer@gmail.com",
+      "phone": "03235992280",
+      "company": "Greelogix",
+      "status": "Active",
+      "id": "1768555835837",
+      "createdAt": "2026-01-16T09:30:35.838Z"
+    },
+    {
+      "name": "Nadeem",
+      "email": "nadeem@gmail.com",
+      "phone": "03235992280",
+      "company": "Knowing",
+      "status": "Active",
+      "id": "1768555872484",
+      "createdAt": "2026-01-16T09:31:12.484Z"
+    },
+    {
+      "name": "Umair",
+      "email": "uamiri@gmail.com",
+      "phone": "03235992280",
+      "company": "saprkosol",
+      "status": "Active",
+      "id": "1768555912122",
+      "createdAt": "2026-01-16T09:31:52.122Z"
     }
   ],
   "deals": [
-    {
-      "id": "8",
-      "title": "Data Analytics Platform",
-      "clientId": "8",
-      "value": 85000,
-      "status": "Lead",
-      "expectedCloseDate": "2024-05-15",
-      "clientName": "Mike Johnson",
-      "userName": "John Sales",
-      "userId": 2,
-      "createdAt": "2024-01-04T00:00:00.000Z"
-    },
     {
       "id": "9",
       "title": "Security Audit",
@@ -117,7 +131,7 @@
       "title": "API Integration",
       "clientId": "10",
       "value": 45000,
-      "status": "Lost",
+      "status": "Won",
       "expectedCloseDate": "2024-06-01",
       "clientName": "David Brown",
       "userName": "John Sales",
@@ -128,7 +142,7 @@
       "title": "Web Development",
       "clientId": "1768197566673",
       "value": "3000",
-      "status": "Proposal",
+      "status": "Lead",
       "expectedCloseDate": "2026-01-31",
       "clientName": "Hassan",
       "userId": "1767773601191",
@@ -137,28 +151,51 @@
       "createdAt": "2026-01-15T13:37:02.222Z"
     },
     {
-      "title": "QA",
-      "clientId": "8",
-      "value": "50000",
-      "status": "Won",
-      "expectedCloseDate": "2026-01-25",
-      "clientName": "Mike Johnson",
-      "userId": "1767773601191",
-      "userName": "Ali haider",
-      "id": "1768484270919",
-      "createdAt": "2026-01-15T13:37:50.919Z"
-    },
-    {
       "title": " Graphic Design",
       "clientId": "10",
       "value": "1000",
-      "status": "Qualified",
+      "status": "Lost",
       "expectedCloseDate": "2026-01-20",
       "clientName": "David Brown",
       "userId": "1767773601191",
       "userName": "Ali haider",
       "id": "1768484532151",
       "createdAt": "2026-01-15T13:42:12.151Z"
+    },
+    {
+      "title": "Social Development",
+      "clientId": "9",
+      "value": "50000",
+      "status": "Won",
+      "expectedCloseDate": "2026-01-31",
+      "clientName": "Emily Davis",
+      "userId": "1767773601191",
+      "userName": "Ali Abbas",
+      "id": "1768558040792"
+    },
+    {
+      "title": "Laptop Seller",
+      "clientId": "1767788282252",
+      "value": "6000",
+      "status": "Won",
+      "expectedCloseDate": "2026-01-31",
+      "clientName": "AliAbbas",
+      "userId": "1767773601191",
+      "userName": "Ali haider",
+      "id": "1768560135529",
+      "createdAt": "2026-01-16T10:42:15.529Z"
+    },
+    {
+      "title": "Social Developer",
+      "clientId": "1768555872484",
+      "value": "5000",
+      "status": "Proposal",
+      "expectedCloseDate": "2026-01-31",
+      "clientName": "Nadeem",
+      "userId": "1768749365722",
+      "userName": "Sanan",
+      "id": "1768749447696",
+      "createdAt": "2026-01-18T15:17:27.696Z"
     }
   ],
   "activities": [
@@ -561,6 +598,111 @@
       "userId": "1767773601191",
       "id": "1768484553159",
       "createdAt": "2026-01-15T13:42:33.159Z"
+    },
+    {
+      "type": "client_created",
+      "message": "New client Tauqeer added",
+      "userId": "1767773601191",
+      "id": "1768555835927",
+      "createdAt": "2026-01-16T09:30:35.927Z"
+    },
+    {
+      "type": "client_created",
+      "message": "New client Nadeem added",
+      "userId": "1767773601191",
+      "id": "1768555872523",
+      "createdAt": "2026-01-16T09:31:12.523Z"
+    },
+    {
+      "type": "client_created",
+      "message": "New client Umair added",
+      "userId": "1767773601191",
+      "id": "1768555912154",
+      "createdAt": "2026-01-16T09:31:52.154Z"
+    },
+    {
+      "type": "client_deleted",
+      "message": "Client Mike Johnson deleted",
+      "userId": "1767773601191",
+      "id": "1768557884072",
+      "createdAt": "2026-01-16T10:04:44.072Z"
+    },
+    {
+      "type": "deal_created",
+      "message": "New deal \"ajshdj\" created",
+      "userId": "1767773601191",
+      "id": "1768558040828",
+      "createdAt": "2026-01-16T10:07:20.828Z"
+    },
+    {
+      "type": "deal_created",
+      "message": "New deal \"dfff\" created",
+      "userId": "1767773601191",
+      "id": "1768559305584",
+      "createdAt": "2026-01-16T10:28:25.584Z"
+    },
+    {
+      "type": "deal_deleted",
+      "message": "Deal \"dfff\" deleted",
+      "userId": "1767773601191",
+      "id": "1768559547459",
+      "createdAt": "2026-01-16T10:32:27.459Z"
+    },
+    {
+      "type": "deal_updated",
+      "message": "Deal \"Social Development\" updated",
+      "userId": "1767773601191",
+      "id": "1768559569286",
+      "createdAt": "2026-01-16T10:32:49.286Z"
+    },
+    {
+      "type": "deal_status_changed",
+      "message": "Deal \"API Integration\" status changed to Won",
+      "userId": "1767773601191",
+      "id": "1768559953512",
+      "createdAt": "2026-01-16T10:39:13.512Z"
+    },
+    {
+      "type": "deal_status_changed",
+      "message": "Deal \" Graphic Design\" status changed to Lost",
+      "userId": "1767773601191",
+      "id": "1768559957379",
+      "createdAt": "2026-01-16T10:39:17.379Z"
+    },
+    {
+      "type": "deal_status_changed",
+      "message": "Deal \"Web Development\" status changed to Lead",
+      "userId": "1767773601191",
+      "id": "1768559961332",
+      "createdAt": "2026-01-16T10:39:21.332Z"
+    },
+    {
+      "type": "deal_created",
+      "message": "New deal \"Laptop Seller\" created",
+      "userId": "1767773601191",
+      "id": "1768560135555",
+      "createdAt": "2026-01-16T10:42:15.555Z"
+    },
+    {
+      "type": "client_updated",
+      "message": "Client Atiq updated",
+      "userId": "1767773601191",
+      "id": "1768560456184",
+      "createdAt": "2026-01-16T10:47:36.184Z"
+    },
+    {
+      "type": "deal_created",
+      "message": "New deal \"Social Developer\" created",
+      "userId": "1768749365722",
+      "id": "1768749447721",
+      "createdAt": "2026-01-18T15:17:27.721Z"
+    },
+    {
+      "type": "deal_updated",
+      "message": "Deal \"Social Development\" updated",
+      "userId": "1767773601191",
+      "id": "1768755742843",
+      "createdAt": "2026-01-18T17:02:22.843Z"
     }
   ]
 }
