@@ -21,12 +21,6 @@ const DealsPage = () => {
   const { getCurrentUser } = useAuth();
   const user = getCurrentUser();
 
-  useEffect(() => {
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual';
-    }
-  }, []);
-
   const { currentPage, limit, goToPage, resetPage } = usePagination(5);
 
   const [deals, setDeals] = useState([]);
@@ -36,12 +30,12 @@ const DealsPage = () => {
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
-  const debouncedSearch = useDebounce(search, 400);
+  const debouncedSearch = useDebounce(search, 800);
 
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
 
-  const tableRef = useRef(null);
+  const tableRef = useRef(null); // ✅ updated ref
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -58,12 +52,12 @@ const DealsPage = () => {
   const dealStatuses = ['Lead', 'Qualified', 'Proposal', 'Won', 'Lost'];
 
   const fetchClients = async () => {
-    try {
-      const res = await clientsAPI.getAll();
+      try {
+        const res = await clientsAPI.getAll();
       setClients(res.data || []);
-    } catch (e) {
+      } catch (e) {
       console.error(e);
-    }
+      }
   };
 
   const fetchDeals = useCallback(async () => {
@@ -81,6 +75,8 @@ const DealsPage = () => {
       if (statusFilter !== 'All') params.status = statusFilter;
 
       const res = await dealsAPI.getAll(params);
+      
+      // Batch state updates to prevent multiple re-renders
       setDeals(res.data || []);
       setTotalRecords(res.total || 0);
     } catch (e) {
@@ -102,17 +98,12 @@ const DealsPage = () => {
     fetchClients();
   }, []);
 
-  // ---------- FIXED PAGINATION SCROLL ----------
   const handlePageChange = (newPage) => {
     goToPage(newPage);
-
-    // Scroll table into view, but keep pagination buttons in place
     if (tableRef.current) {
-      const tableTop = tableRef.current.querySelector('table')?.getBoundingClientRect().top + window.scrollY;
-      const offset = 10; // small offset from top
-      window.scrollTo({
-        top: tableTop - offset,
-        behavior: 'smooth'
+      tableRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
       });
     }
   };
@@ -142,23 +133,31 @@ const DealsPage = () => {
         userId: user?.id
       });
 
-      fetchDeals();
+      await fetchDeals();
       closeModal();
     } catch (e) {
       alert('Save failed');
     }
   };
 
-  const handleDelete = async (deal) => {
+  const handleDelete = useCallback(async (deal) => {
     if (!window.confirm(`Delete deal "${deal.title}"?`)) return;
+    try {
     await dealsAPI.delete(deal.id);
-    fetchDeals();
-  };
+      await fetchDeals();
+    } catch (e) {
+      console.error(e);
+    }
+  }, [fetchDeals]);
 
-  const handleStatusChange = async (deal, status) => {
+  const handleStatusChange = useCallback(async (deal, status) => {
+    try {
     await dealsAPI.update(deal.id, { ...deal, status });
-    fetchDeals();
-  };
+      await fetchDeals();
+    } catch (e) {
+      console.error(e);
+    }
+  }, [fetchDeals]);
 
   const handleEdit = (deal) => {
     setEditingDeal(deal);
@@ -201,12 +200,12 @@ const DealsPage = () => {
       <td>{deal.expectedCloseDate || '—'}</td>
       <td>
         <div className="action-buttons">
-          <Button size="sm" variant="outline-primary" onClick={() => handleEdit(deal)}>
-            <MdEdit />
+        <Button size="sm" variant="outline-primary" onClick={() => handleEdit(deal)}>
+          <MdEdit />
           </Button>
-          <Button size="sm" variant="outline-danger" onClick={() => handleDelete(deal)}>
-            <MdDelete />
-          </Button>
+        <Button size="sm" variant="outline-danger" onClick={() => handleDelete(deal)}>
+          <MdDelete />
+        </Button>
         </div>
       </td>
     </tr>
@@ -226,28 +225,24 @@ const DealsPage = () => {
 
       <div className="dashboard-container">
         <div className="dashboard-content">
-          <AppNavbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <AppNavbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-          <Container fluid>
-            <PageHeader icon={MdHandshake} title="Deals Management" />
+        <Container fluid>
+          <PageHeader icon={MdHandshake} title="Deals Management" />
 
-            <SearchFilter
-              searchTerm={search}
-              onSearchChange={setSearch}
-              statusFilter={statusFilter}
-              onStatusChange={setStatusFilter}
-              statusOptions={dealStatuses}
-              onAddClick={() => setShowModal(true)}
-              addButtonText="Add Deal"
-            />
+          <SearchFilter
+            searchTerm={search}
+            onSearchChange={setSearch}
+            statusFilter={statusFilter}
+            onStatusChange={setStatusFilter}
+            statusOptions={dealStatuses}
+            onAddClick={() => setShowModal(true)}
+            addButtonText="Add Deal"
+          />
 
             <div className="mb-3 d-flex gap-2 align-items-center">
               <Form.Label className="mb-0">Sort by:</Form.Label>
-              <Form.Select
-                style={{ width: '150px' }}
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
+              <Form.Select style={{ width: '150px' }} value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                 <option value="createdAt">Date Created</option>
                 <option value="title">Title</option>
                 <option value="value">Value</option>
@@ -255,29 +250,25 @@ const DealsPage = () => {
                 <option value="clientName">Client</option>
               </Form.Select>
 
-              <Form.Select
-                style={{ width: '120px' }}
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-              >
+              <Form.Select style={{ width: '120px' }} value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
                 <option value="asc">Ascending</option>
                 <option value="desc">Descending</option>
               </Form.Select>
             </div>
 
-            <div ref={tableRef} style={{ minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ flex: 1 }}>
-                <DataTable
-                  icon={MdHandshake}
-                  title="Deals List"
-                  data={deals}
-                  columns={['Title', 'Client', 'Value', 'Status', 'Close Date', 'Actions']}
-                  renderRow={renderRow}
-                  emptyMessage="No deals found"
-                />
-              </div>
-              {totalRecords > 0 && (
-                <div className="pagination-container" style={{ marginTop: 'auto' }}>
+            <div ref={tableRef} style={{minHeight: '500px', display: 'flex', flexDirection: 'column'}}>
+              <div style={{flex: 1}}>
+            <DataTable
+              icon={MdHandshake}
+              title="Deals List"
+              data={deals}
+              columns={['Title', 'Client', 'Value', 'Status', 'Close Date', 'Actions']}
+              renderRow={renderRow}
+              emptyMessage="No deals found"
+            />
+          </div>
+          {totalRecords > 0 && (
+                <div className="pagination-container" style={{marginTop: 'auto'}}>
                   <div className="pagination-info">
                     Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, totalRecords)} of {totalRecords}
                   </div>
@@ -285,31 +276,30 @@ const DealsPage = () => {
                     <button
                       className="btn btn-sm btn-outline-primary"
                       onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
+                disabled={currentPage === 1}
+              >
+                Previous
                     </button>
                     <span className="mx-2">Page {currentPage} of {Math.ceil(totalRecords / limit)}</span>
                     <button
                       className="btn btn-sm btn-outline-primary"
                       onClick={() => handlePageChange(Math.min(Math.ceil(totalRecords / limit), currentPage + 1))}
-                      disabled={currentPage === Math.ceil(totalRecords / limit)}
-                    >
-                      Next
+                disabled={currentPage === Math.ceil(totalRecords / limit)}
+              >
+                Next
                     </button>
                   </div>
                 </div>
               )}
             </div>
 
-            <FormModal
-              show={showModal}
-              onHide={closeModal}
+          <FormModal
+            show={showModal}
+            onHide={closeModal}
               title={editingDeal ? 'Edit Deal' : 'Add New Deal'}
-              onSubmit={handleSubmit}
-              submitText={editingDeal ? 'Update Deal' : 'Add Deal'}
-            >
-              {/* FORM FIELDS */}
+            onSubmit={handleSubmit}
+            submitText={editingDeal ? 'Update Deal' : 'Add Deal'}
+          >
               <Form.Group className="mb-3">
                 <Form.Label>Deal Title *</Form.Label>
                 <Form.Control
@@ -318,7 +308,6 @@ const DealsPage = () => {
                   required
                 />
               </Form.Group>
-
               <Form.Group className="mb-3">
                 <Form.Label>Client *</Form.Label>
                 <Form.Select
@@ -327,14 +316,9 @@ const DealsPage = () => {
                   required
                 >
                   <option value="">Select Client</option>
-                  {clients.map(client => (
-                    <option key={client.id} value={client.id}>
-                      {client.name} - {client.company}
-                    </option>
-                  ))}
+                  {clients.map(client => <option key={client.id} value={client.id}>{client.name} - {client.company}</option>)}
                 </Form.Select>
               </Form.Group>
-
               <Form.Group className="mb-3">
                 <Form.Label>Deal Value *</Form.Label>
                 <Form.Control
@@ -344,19 +328,15 @@ const DealsPage = () => {
                   required
                 />
               </Form.Group>
-
               <Form.Group className="mb-3">
                 <Form.Label>Status</Form.Label>
                 <Form.Select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 >
-                  {dealStatuses.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
+                  {dealStatuses.map(status => <option key={status} value={status}>{status}</option>)}
                 </Form.Select>
               </Form.Group>
-
               <Form.Group className="mb-3">
                 <Form.Label>Expected Close Date</Form.Label>
                 <Form.Control
@@ -365,8 +345,8 @@ const DealsPage = () => {
                   onChange={(e) => setFormData({ ...formData, expectedCloseDate: e.target.value })}
                 />
               </Form.Group>
-            </FormModal>
-          </Container>
+          </FormModal>
+        </Container>
         </div>
       </div>
     </>

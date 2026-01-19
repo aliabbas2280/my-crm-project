@@ -47,7 +47,7 @@
       "email": "aliabbas56715180@gmail.com",
       "phone": "03235992280",
       "company": "Greelogix",
-      "status": "Inactive",
+      "status": "Active",
       "id": "1767788282252"
     },
     {
@@ -111,6 +111,15 @@
       "status": "Active",
       "id": "1768555912122",
       "createdAt": "2026-01-16T09:31:52.122Z"
+    },
+    {
+      "name": "Ali Raza",
+      "email": "Aliraza@gmail.com",
+      "phone": "03235992280",
+      "company": "Greelogix",
+      "status": "Active",
+      "id": "1768816528834",
+      "createdAt": "2026-01-19T09:55:28.834Z"
     }
   ],
   "deals": [
@@ -208,6 +217,30 @@
       "userName": "Ali Abbas",
       "id": "1768813114905",
       "createdAt": "2026-01-19T08:58:34.905Z"
+    },
+    {
+      "title": "Fishries",
+      "clientId": "10",
+      "value": "2000",
+      "status": "Won",
+      "expectedCloseDate": "2026-01-19",
+      "clientName": "David Brown",
+      "userId": "1767773601191",
+      "userName": "Ali Abbas",
+      "id": "1768816471812",
+      "createdAt": "2026-01-19T09:54:31.812Z"
+    },
+    {
+      "title": "Function",
+      "clientId": "1767868285378",
+      "value": "5000",
+      "status": "Proposal",
+      "expectedCloseDate": "2026-01-31",
+      "clientName": "Atiq",
+      "userId": "1767773601191",
+      "userName": "Ali Abbas",
+      "id": "1768816494377",
+      "createdAt": "2026-01-19T09:54:54.377Z"
     }
   ],
   "activities": [
@@ -729,6 +762,34 @@
       "userId": "1767773601191",
       "id": "1768813114952",
       "createdAt": "2026-01-19T08:58:34.952Z"
+    },
+    {
+      "type": "deal_created",
+      "message": "New deal \"Fishries\" created",
+      "userId": "1767773601191",
+      "id": "1768816471859",
+      "createdAt": "2026-01-19T09:54:31.859Z"
+    },
+    {
+      "type": "deal_created",
+      "message": "New deal \"Function\" created",
+      "userId": "1767773601191",
+      "id": "1768816494409",
+      "createdAt": "2026-01-19T09:54:54.409Z"
+    },
+    {
+      "type": "client_created",
+      "message": "New client Ali Raza added",
+      "userId": "1767773601191",
+      "id": "1768816528887",
+      "createdAt": "2026-01-19T09:55:28.887Z"
+    },
+    {
+      "type": "client_updated",
+      "message": "Client AliAbbas updated",
+      "userId": "1767773601191",
+      "id": "1768822752712",
+      "createdAt": "2026-01-19T11:39:12.712Z"
     }
   ]
 }
