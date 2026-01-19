@@ -179,7 +179,7 @@ const ClientsPage = () => {
           <AppNavbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
           <Container fluid>
-            <PageHeader icon={MdPeople} title="Clients Management" />
+            <PageHeader icon={MdPeople} title="Client Management" />
 
             <SearchFilter
               searchTerm={searchTerm}

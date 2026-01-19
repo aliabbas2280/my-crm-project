@@ -1,6 +1,6 @@
 .dashboard-container {
   margin-left: 280px;
-  min-height: 100vh;
+  min-height: auto;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   transition: margin-left 0.3s ease;
   position: relative;
@@ -10,7 +10,7 @@
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
-  min-height: 100vh; 
+  min-height: auto; 
 }
 
 .table-wrapper {
@@ -19,13 +19,10 @@
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.05);
-  /* Ensures space is reserved while data is loading */
   min-height: 450px; 
   margin-bottom: 2rem;
-  overflow: hidden;
+  overflow: visible;
 }
-
-/* Spinner overlay that sits on top of the table without removing it */
 .table-loading-overlay {
   position: absolute;
   top: 0;
@@ -312,13 +309,13 @@
   top: 1.5rem;
   left: 1.5rem;
   z-index: 1050;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  border-radius: 12px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
   padding: 0.75rem;
   font-size: 1.5rem;
-  color: white;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  color: #000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   display: none;
   transition: all 0.3s ease;
@@ -326,7 +323,8 @@
 
 .hamburger-menu:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: #f9fafb;
 }
 
 .hamburger-menu:active {
@@ -436,7 +434,6 @@
     gap: 1rem;
   }
   
-  /* Sort controls responsive on mobile */
   .mb-3.d-flex.gap-2.align-items-center {
     flex-wrap: wrap;
     gap: 0.5rem !important;
@@ -485,7 +482,6 @@
     padding: 1rem;
   }
   
-  /* Sort controls stack vertically on small screens */
   .mb-3.d-flex.gap-2.align-items-center {
     flex-direction: column;
     align-items: stretch !important;
@@ -507,12 +503,11 @@
 }
 
 @media (max-width: 320px) {
-  .hamburger-menu {
-    top: 0.75rem;
-    left: 0.75rem;
-    padding: 0.5rem;
-    font-size: 1.25rem;
-  }
+      .hamburger-menu {
+        top: 2rem;
+        left: 2rem;
+        font-size: 1rem;
+    }
 
   .main-header {
     padding-left: 3.5rem;
@@ -583,7 +578,7 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: normal;
-    max-width: 100px;
+    max-width: 120px;
   }
 
   .modern-table td:last-child {
@@ -600,10 +595,39 @@
     padding: 1.5rem;
   }
   
-  /* Sort controls full width on 320px */
   .mb-3.d-flex.gap-2.align-items-center .btn {
     width: 100%;
     margin-bottom: 0.5rem;
+  }
+
+ 
+  .modern-table-card .table {
+    font-size: 0.65rem;
+  }
+
+  .modern-table-card .table td {
+    padding: 0.4rem 0.2rem;
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+
+  .pagination-container {
+    padding: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .pagination-info {
+    font-size: 0.7rem;
+  }
+
+  .pagination-controls .btn {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .pagination-controls .mx-2 {
+    font-size: 0.7rem;
+    margin: 0 0.5rem !important;
   }
 }
 

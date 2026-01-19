@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Container, Button, Form } from 'react-bootstrap';
-import {MdHandshake,MdEdit, MdDelete,MdMenu, MdClose, MdArrowUpward, MdArrowDownward} from 'react-icons/md';
+import { MdHandshake, MdEdit, MdDelete, MdMenu, MdClose } from 'react-icons/md';
 import AppNavbar from '../components/Layout/Navbar';
 import PageHeader from '../components/Common/PageHeader';
 import SearchFilter from '../components/Common/SearchFilter';
@@ -102,21 +102,24 @@ const DealsPage = () => {
     fetchClients();
   }, []);
 
+  // ---------- FIXED PAGINATION SCROLL ----------
   const handlePageChange = (newPage) => {
     goToPage(newPage);
+
+    // Scroll table into view, but keep pagination buttons in place
     if (tableRef.current) {
-      tableRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
+      const tableTop = tableRef.current.querySelector('table')?.getBoundingClientRect().top + window.scrollY;
+      const offset = 10; // small offset from top
+      window.scrollTo({
+        top: tableTop - offset,
+        behavior: 'smooth'
       });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const client = clients.find(c => c.id === formData.clientId);
-
     const payload = {
       ...formData,
       clientName: client?.name || '',
@@ -148,7 +151,6 @@ const DealsPage = () => {
 
   const handleDelete = async (deal) => {
     if (!window.confirm(`Delete deal "${deal.title}"?`)) return;
-
     await dealsAPI.delete(deal.id);
     fetchDeals();
   };
@@ -263,8 +265,8 @@ const DealsPage = () => {
               </Form.Select>
             </div>
 
-            <div ref={tableRef} style={{minHeight: '500px', display: 'flex', flexDirection: 'column'}}>
-              <div style={{flex: 1}}>
+            <div ref={tableRef} style={{ minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ flex: 1 }}>
                 <DataTable
                   icon={MdHandshake}
                   title="Deals List"
@@ -275,7 +277,7 @@ const DealsPage = () => {
                 />
               </div>
               {totalRecords > 0 && (
-                <div className="pagination-container" style={{marginTop: 'auto'}}>
+                <div className="pagination-container" style={{ marginTop: 'auto' }}>
                   <div className="pagination-info">
                     Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, totalRecords)} of {totalRecords}
                   </div>
@@ -299,6 +301,7 @@ const DealsPage = () => {
                 </div>
               )}
             </div>
+
             <FormModal
               show={showModal}
               onHide={closeModal}
@@ -306,6 +309,7 @@ const DealsPage = () => {
               onSubmit={handleSubmit}
               submitText={editingDeal ? 'Update Deal' : 'Add Deal'}
             >
+              {/* FORM FIELDS */}
               <Form.Group className="mb-3">
                 <Form.Label>Deal Title *</Form.Label>
                 <Form.Control

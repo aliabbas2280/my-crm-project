@@ -14,17 +14,13 @@ const Dashboard = () => {
   const user = getCurrentUser();
   
   const [searchQuery, setSearchQuery] = useState("");
-  const debouncedSearch = useDebounce(searchQuery, 800);
+  const debouncedSearch = useDebounce(searchQuery, 400);
   const [deals, setDeals] = useState([]);
   const [activities, setActivities] = useState([]);
   const [metrics, setMetrics] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dealsCurrentPage, setDealsCurrentPage] = useState(1);
-  const [activitiesCurrentPage, setActivitiesCurrentPage] = useState(1);
-  const dealsItemsPerPage = 5;
-  const activitiesItemsPerPage = 4;
 
   const fetchDashboardData = async () => {
     try {
@@ -33,12 +29,21 @@ const Dashboard = () => {
       const metricsRes = await metricsAPI.getMetrics();
       setMetrics(metricsRes);
 
+      const dealsParams = {
+        limit: 5
+      };
+      if (debouncedSearch.trim()) dealsParams.q = debouncedSearch.trim();
+
+      const activitiesParams = {
+        limit: 5
+      };
+      if (debouncedSearch.trim()) activitiesParams.q = debouncedSearch.trim();
+
       const [dealsRes, activitiesRes] = await Promise.all([
-        dealsAPI.getAll(),
-        activitiesAPI.getAll(),
+        dealsAPI.getAll(dealsParams),
+        activitiesAPI.getAll(activitiesParams),
       ]);
 
-      
       setDeals(dealsRes.data || []);
       setActivities(activitiesRes.data || []);
     } catch (err) {
@@ -51,36 +56,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
-
-
-  const filteredDeals = deals.filter(
-    (d) =>
-      d.title?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-      d.status?.toLowerCase().includes(debouncedSearch.toLowerCase())
-  );
-
-  const filteredActivities = activities.filter(
-    (a) =>
-      a.type?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-      a.message?.toLowerCase().includes(debouncedSearch.toLowerCase())
-  );
-
-  const dealsTotalPages = Math.ceil(filteredDeals.length / dealsItemsPerPage);
-  const paginatedDeals = filteredDeals.slice(
-    (dealsCurrentPage - 1) * dealsItemsPerPage,
-    dealsCurrentPage * dealsItemsPerPage
-  );
-
-  const activitiesTotalPages = Math.ceil(filteredActivities.length / activitiesItemsPerPage);
-  const paginatedActivities = filteredActivities.slice(
-    (activitiesCurrentPage - 1) * activitiesItemsPerPage,
-    activitiesCurrentPage * activitiesItemsPerPage
-  );
-
-  useEffect(() => {
-    setDealsCurrentPage(1);
-    setActivitiesCurrentPage(1);
   }, [debouncedSearch]);
 
   if (loading) {
@@ -115,16 +90,16 @@ const Dashboard = () => {
         <AppNavbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
         <Row className="g-4 mb-4">
-          <Col lg={3}>
+          <Col xs={12} md={6} lg={3}>
             <KPI icon={<FaDollarSign />} value={`$${metrics.totalRevenue?.toLocaleString()}`} label="Revenue" color="green" />
           </Col>
-          <Col lg={3}>
+          <Col xs={12} md={6} lg={3}>
             <KPI icon={<FaHandshake />} value={`$${metrics.activeDealsValue?.toLocaleString()}`} label="Deals Value" color="blue" />
           </Col>
-          <Col lg={3}>
+          <Col xs={12} md={6} lg={3}>
             <KPI icon={<FaUsers />} value={metrics.activeClients} label="Clients" color="pink" />
           </Col>
-          <Col lg={3}>
+          <Col xs={12} md={6} lg={3}>
             <KPI icon={<FaChartLine />} value={`${metrics.conversionRate}%`} label="Conversion" color="purple" />
           </Col>
         </Row>
@@ -136,14 +111,14 @@ const Dashboard = () => {
               <div style={{flex: 1}}>
                 <Table>
                   <tbody>
-                    {paginatedDeals.map((d) => (
+                    {deals.map((d) => (
                       <tr key={d.id}>
                         <td>{d.title}</td>
                         <td>{d.status}</td>
                         <td>${Number(d.value || 0).toLocaleString()}</td>
                       </tr>
                     ))}
-                    {filteredDeals.length === 0 && (
+                    {deals.length === 0 && (
                       <tr>
                         <td colSpan="3" className="text-center text-muted">
                           {debouncedSearch ? "No deals found for your search" : "No recent deals"}
@@ -153,30 +128,6 @@ const Dashboard = () => {
                   </tbody>
                 </Table>
               </div>
-              {filteredDeals.length > 0 && (
-                <div className="pagination-container" style={{marginTop: 'auto'}}>
-                  <div className="pagination-info">
-                    Showing {(dealsCurrentPage - 1) * dealsItemsPerPage + 1} to {Math.min(dealsCurrentPage * dealsItemsPerPage, filteredDeals.length)} of {filteredDeals.length}
-                  </div>
-                  <div className="pagination-controls">
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => setDealsCurrentPage(p => Math.max(1, p - 1))}
-                      disabled={dealsCurrentPage === 1}
-                    >
-                      Previous
-                    </button>
-                    <span className="mx-2">Page {dealsCurrentPage} of {dealsTotalPages}</span>
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => setDealsCurrentPage(p => Math.min(dealsTotalPages, p + 1))}
-                      disabled={dealsCurrentPage === dealsTotalPages}
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              )}
             </Card>
           </Col>
 
@@ -186,13 +137,13 @@ const Dashboard = () => {
               <div style={{flex: 1}}>
                 <Table>
                   <tbody>
-                    {paginatedActivities.map((a) => (
+                    {activities.map((a) => (
                       <tr key={a.id}>
                         <td>{a.type}</td>
                         <td>{a.message}</td>
                       </tr>
                     ))}
-                    {filteredActivities.length === 0 && (
+                    {activities.length === 0 && (
                       <tr>
                         <td colSpan="2" className="text-center text-muted">
                           {debouncedSearch ? "No activities found for your search" : "No recent activities"}
@@ -202,30 +153,6 @@ const Dashboard = () => {
                   </tbody>
                 </Table>
               </div>
-              {filteredActivities.length > 0 && (
-                <div className="pagination-container" style={{marginTop: 'auto'}}>
-                  <div className="pagination-info">
-                    Showing {(activitiesCurrentPage - 1) * activitiesItemsPerPage + 1} to {Math.min(activitiesCurrentPage * activitiesItemsPerPage, filteredActivities.length)} of {filteredActivities.length}
-                  </div>
-                  <div className="pagination-controls">
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => setActivitiesCurrentPage(p => Math.max(1, p - 1))}
-                      disabled={activitiesCurrentPage === 1}
-                    >
-                      Previous
-                    </button>
-                    <span className="mx-2">Page {activitiesCurrentPage} of {activitiesTotalPages}</span>
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => setActivitiesCurrentPage(p => Math.min(activitiesTotalPages, p + 1))}
-                      disabled={activitiesCurrentPage === activitiesTotalPages}
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              )}
             </Card>
           </Col>
         </Row>

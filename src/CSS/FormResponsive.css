@@ -1,4 +1,3 @@
-/* Form Modal Responsive Styles */
 .modal-content {
   border-radius: 16px;
   border: none;
@@ -27,7 +26,6 @@
   border-top: 2px solid #f3f4f6;
 }
 
-/* Form Controls */
 .form-control,
 .form-select {
   border-radius: 10px;
@@ -68,11 +66,10 @@
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
-/* Mobile responsiveness: 320px - 768px */
 @media (max-width: 768px) {
   .modal-dialog {
     margin: 0.5rem;
-    max-width: calc(100% - 1rem); /* Prevent horizontal overflow */
+    max-width: calc(100% - 1rem); 
   }
   
   .modal-body {
@@ -87,14 +84,13 @@
   .form-select {
     padding: 0.65rem 0.875rem;
     font-size: 0.9rem;
-    width: 100%; /* Full width on mobile */
+    width: 100%; 
   }
   
   .form-label {
     font-size: 0.85rem;
   }
   
-  /* Stack form rows vertically on mobile */
   .row > [class*="col-"] {
     margin-bottom: 0.5rem;
   }
