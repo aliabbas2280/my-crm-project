@@ -27,7 +27,7 @@ const ClientsPage = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
-  const debouncedSearchTerm = useDebounce(searchTerm, 800);
+  const debouncedSearchTerm = useDebounce(searchTerm, 2000);
 
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
@@ -48,7 +48,6 @@ const ClientsPage = () => {
 
   const dealStatuses = ['Lead', 'Qualified', 'Proposal', 'Won', 'Lost'];
 
-  // Handle column sorting when header is clicked for ClientsPage
   const handleSort = (columnKey) => {
     if (sortBy === columnKey) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -88,7 +87,7 @@ const ClientsPage = () => {
     fetchClients();
   }, [currentPage, debouncedSearchTerm, statusFilter, sortBy, sortOrder]);
 
- 
+
   const handlePageChange = (newPage) => {
     goToPage(newPage);
     if (tableRef.current) {
@@ -203,31 +202,9 @@ const ClientsPage = () => {
               addButtonText="Add Client"
             />
 
-            <div className="mb-3 d-flex gap-2 align-items-center">
-              <Form.Label className="mb-0">Sort by:</Form.Label>
-              <Form.Select
-                style={{ width: '150px' }}
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="createdAt">Date Created</option>
-                <option value="name">Name</option>
-                <option value="company">Company</option>
-                <option value="status">Status</option>
-              </Form.Select>
 
-              <Form.Select
-                style={{ width: '120px' }}
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-              >
-                <option value="asc">Ascending</option>
-                <option value="desc">Descending</option>
-              </Form.Select>
-            </div>
-
-            <div ref={tableRef} style={{minHeight: '500px', display: 'flex', flexDirection: 'column'}}>
-              <div style={{flex: 1}}>
+            <div ref={tableRef} style={{ minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ flex: 1 }}>
                 <DataTable
                   icon={MdPeople}
                   title="Clients List"
@@ -248,7 +225,7 @@ const ClientsPage = () => {
                 />
               </div>
               {totalRecords > 0 && (
-                <div className="pagination-container" style={{marginTop: 'auto'}}>
+                <div className="pagination-container" style={{ marginTop: 'auto' }}>
                   <div className="pagination-info">
                     Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, totalRecords)} of {totalRecords}
                   </div>

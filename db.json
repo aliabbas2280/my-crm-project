@@ -77,15 +77,6 @@
       "createdAt": "2024-01-05T00:00:00.000Z"
     },
     {
-      "id": "10",
-      "name": "David Brown",
-      "email": "david@solutions.com",
-      "phone": "+1555321654",
-      "company": "Solutions Group",
-      "status": "Active",
-      "createdAt": "2024-01-06T00:00:00.000Z"
-    },
-    {
       "name": "Tauqeer",
       "email": "tauqeer@gmail.com",
       "phone": "03235992280",
@@ -128,24 +119,12 @@
       "title": "Security Audit",
       "clientId": "9",
       "value": 35000,
-      "status": "Qualified",
+      "status": "Won",
       "expectedCloseDate": "2024-03-20",
       "clientName": "Emily Davis",
       "userName": "Admin User",
       "userId": 1,
       "createdAt": "2024-01-05T00:00:00.000Z"
-    },
-    {
-      "id": "10",
-      "title": "API Integration",
-      "clientId": "10",
-      "value": 45000,
-      "status": "Won",
-      "expectedCloseDate": "2024-06-01",
-      "clientName": "David Brown",
-      "userName": "John Sales",
-      "userId": 2,
-      "createdAt": "2024-01-06T00:00:00.000Z"
     },
     {
       "title": "Web Development",
@@ -158,18 +137,6 @@
       "userName": "Ali haider",
       "id": "1768484222222",
       "createdAt": "2026-01-15T13:37:02.222Z"
-    },
-    {
-      "title": " Graphic Design",
-      "clientId": "10",
-      "value": "1000",
-      "status": "Lost",
-      "expectedCloseDate": "2026-01-20",
-      "clientName": "David Brown",
-      "userId": "1767773601191",
-      "userName": "Ali haider",
-      "id": "1768484532151",
-      "createdAt": "2026-01-15T13:42:12.151Z"
     },
     {
       "title": "Social Development",
@@ -197,38 +164,25 @@
     {
       "title": "Social Developer",
       "clientId": "1768555872484",
-      "value": "5000",
-      "status": "Proposal",
+      "value": "9000",
+      "status": "Won",
       "expectedCloseDate": "2026-01-31",
       "clientName": "Nadeem",
-      "userId": "1768749365722",
-      "userName": "Sanan",
-      "id": "1768749447696",
-      "createdAt": "2026-01-18T15:17:27.696Z"
+      "userId": "1767773601191",
+      "userName": "Ali Abbas",
+      "id": "1768749447696"
     },
     {
       "title": "Github",
       "clientId": "1767788282252",
       "value": "1000",
-      "status": "Lead",
+      "status": "Won",
       "expectedCloseDate": "2026-01-31",
       "clientName": "AliAbbas",
       "userId": "1767773601191",
       "userName": "Ali Abbas",
       "id": "1768813114905",
       "createdAt": "2026-01-19T08:58:34.905Z"
-    },
-    {
-      "title": "Fishries",
-      "clientId": "10",
-      "value": "2000",
-      "status": "Won",
-      "expectedCloseDate": "2026-01-19",
-      "clientName": "David Brown",
-      "userId": "1767773601191",
-      "userName": "Ali Abbas",
-      "id": "1768816471812",
-      "createdAt": "2026-01-19T09:54:31.812Z"
     },
     {
       "title": "Function",
@@ -285,6 +239,27 @@
       "userId": "1767773601191",
       "id": "1768822752712",
       "createdAt": "2026-01-19T11:39:12.712Z"
+    },
+    {
+      "type": "deal_updated",
+      "message": "Deal \"Social Developer\" updated",
+      "userId": "1767773601191",
+      "id": "1768907449754",
+      "createdAt": "2026-01-20T11:10:49.754Z"
+    },
+    {
+      "type": "client_updated",
+      "message": "Client Nadeem updated",
+      "userId": "1767773601191",
+      "id": "1768908100472",
+      "createdAt": "2026-01-20T11:21:40.472Z"
+    },
+    {
+      "type": "client_deleted",
+      "message": "Client David Brown deleted",
+      "userId": "1767773601191",
+      "id": "1768908133882",
+      "createdAt": "2026-01-20T11:22:13.882Z"
     }
   ]
 }
