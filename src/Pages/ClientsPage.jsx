@@ -46,6 +46,18 @@ const ClientsPage = () => {
 
   const tableRef = useRef(null);
 
+  const dealStatuses = ['Lead', 'Qualified', 'Proposal', 'Won', 'Lost'];
+
+  // Handle column sorting when header is clicked for ClientsPage
+  const handleSort = (columnKey) => {
+    if (sortBy === columnKey) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(columnKey);
+      setSortOrder('asc');
+    }
+  };
+
   const fetchClients = async () => {
     try {
       setLoading(true);
@@ -220,9 +232,19 @@ const ClientsPage = () => {
                   icon={MdPeople}
                   title="Clients List"
                   data={clients}
-                  columns={['Name', 'Company', 'Email', 'Phone', 'Status', 'Actions']}
+                  columns={[
+                    { label: 'Name', key: 'name', sortable: true },
+                    { label: 'Company', key: 'company', sortable: true },
+                    { label: 'Email', key: 'email', sortable: true },
+                    { label: 'Phone', key: 'phone', sortable: false },
+                    { label: 'Status', key: 'status', sortable: false },
+                    { label: 'Actions', key: 'actions', sortable: false }
+                  ]}
                   renderRow={renderClientRow}
                   emptyMessage="No clients found"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                  onSort={handleSort}
                 />
               </div>
               {totalRecords > 0 && (

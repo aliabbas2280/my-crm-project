@@ -51,6 +51,16 @@ const DealsPage = () => {
 
   const dealStatuses = ['Lead', 'Qualified', 'Proposal', 'Won', 'Lost'];
 
+  // Handle column sorting when header is clicked
+  const handleSort = (columnKey) => {
+    if (sortBy === columnKey) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(columnKey);
+      setSortOrder('asc');
+    }
+  };
+
   const fetchClients = async () => {
       try {
         const res = await clientsAPI.getAll();
@@ -262,9 +272,19 @@ const DealsPage = () => {
               icon={MdHandshake}
               title="Deals List"
               data={deals}
-              columns={['Title', 'Client', 'Value', 'Status', 'Close Date', 'Actions']}
+              columns={[
+                { label: 'Title', key: 'title', sortable: true },
+                { label: 'Client', key: 'clientName', sortable: true },
+                { label: 'Value', key: 'value', sortable: true },
+                { label: 'Status', key: 'status', sortable: false },
+                { label: 'Close Date', key: 'expectedCloseDate', sortable: false },
+                { label: 'Actions', key: 'actions', sortable: false }
+              ]}
               renderRow={renderRow}
               emptyMessage="No deals found"
+              sortBy={sortBy}
+              sortOrder={sortOrder}
+              onSort={handleSort}
             />
           </div>
           {totalRecords > 0 && (
